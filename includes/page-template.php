@@ -1,10 +1,10 @@
-<?php namespace WSUWP\Plugin\Scholarships;
+<?php namespace VCUL\Plugin\Directory;
 
 class Page_Template {
 
 	public static function append_meta_content( $content ) {
 
-		if ( ! is_admin() && is_singular( \WSU\Scholarships\Post_Type\post_type_slug() ) && is_main_query() ) {
+		if ( ! is_admin() && is_singular( \VCUL\Directory\Post_Type\post_type_slug() ) && is_main_query() ) {
 			// $post = get_post();
 			global $post;
 			$id = $post->ID;

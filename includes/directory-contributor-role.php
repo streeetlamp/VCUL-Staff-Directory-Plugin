@@ -1,6 +1,6 @@
 <?php
 
-namespace WSU\Scholarships\Contributor_Role;
+namespace VCUL\Directory\Contributor_Role;
 
 /**
  * Provides the name of the Scholarship Contributor role.
@@ -13,7 +13,7 @@ function scholarship_contributor() {
 	return 'wsuwp_scholarship_contributor';
 }
 
-add_action( 'init', 'WSU\Scholarships\Contributor_Role\add_scholarship_contributor_role' );
+add_action( 'init', 'VCUL\Directory\Contributor_Role\add_scholarship_contributor_role' );
 /**
  * Adds the Scholarship Contributor role.
  *
@@ -36,7 +36,7 @@ function add_scholarship_contributor_role() {
 	);
 }
 
-add_action( 'init', 'WSU\Scholarships\Contributor_Role\map_scholarship_contributor_capabilities', 13 );
+add_action( 'init', 'VCUL\Directory\Contributor_Role\map_scholarship_contributor_capabilities', 13 );
 /**
  * Maps the Scholarship Contributor role capabilities to the scholarship post type.
  *
@@ -49,7 +49,7 @@ function map_scholarship_contributor_capabilities() {
 		return;
 	}
 
-	$scholarships = get_post_type_object( \WSU\Scholarships\Post_Type\post_type_slug() );
+	$scholarships = get_post_type_object( \VCUL\Directory\Post_Type\post_type_slug() );
 
 	if ( $scholarships ) {
 		$scholarships->cap->create_posts = 'create_scholarships';
@@ -65,7 +65,7 @@ function map_scholarship_contributor_capabilities() {
 	}
 }
 
-add_action( 'pre_get_posts', 'WSU\Scholarships\Contributor_Role\filter_list_tables' );
+add_action( 'pre_get_posts', 'VCUL\Directory\Contributor_Role\filter_list_tables' );
 /**
  * Filters the media library view for users with the Scholarship Contributor role.
  *

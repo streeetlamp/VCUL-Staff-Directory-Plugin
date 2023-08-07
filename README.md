@@ -1,6 +1,6 @@
 # WSUWP Scholarships
 
-[![Build Status](https://travis-ci.org/washingtonstateuniversity/WSUWP-Plugin-Scholarships.svg?branch=master)](https://travis-ci.org/washingtonstateuniversity/WSUWP-Plugin-Scholarships)
+[![Build Status](https://travis-ci.org/washingtonstateuniversity/vcul-Plugin-Scholarships.svg?branch=master)](https://travis-ci.org/washingtonstateuniversity/vcul-Plugin-Scholarships)
 
 A WordPress plugin for managing a collection of scholarships.
 

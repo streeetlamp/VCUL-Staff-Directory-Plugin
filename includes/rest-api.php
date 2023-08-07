@@ -1,4 +1,4 @@
-<?php namespace WSUWP\Plugin\Scholarships;
+<?php namespace VCUL\Plugin\Directory;
 
 class Rest_API {
 
@@ -11,7 +11,7 @@ class Rest_API {
 
 		$data['gradeLevels'] = get_terms(
 			array(
-				'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_grade(),
+				'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_grade(),
 				'hide_empty' => 0,
 				'orderby' => 'term_id',
 			)
@@ -19,12 +19,12 @@ class Rest_API {
 
 		$data['citizenship'] = get_terms(
 			array(
-				'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_citizenship(),
+				'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_citizenship(),
 				'hide_empty' => 0,
 			)
 		);
 
-		$data['states'] = \WSU\Scholarships\Post_Type\states();
+		$data['states'] = \VCUL\Directory\Post_Type\states();
 
 		if ( 'false' === $is_search_block ) {
 			$data['requirements'] = array(
@@ -44,21 +44,21 @@ class Rest_API {
 
 			$data['majors'] = get_terms(
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_major(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_major(),
 					'hide_empty' => 0,
 				)
 			);
 
 			$data['identities'] = get_terms(
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_gender(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_gender(),
 					'hide_empty' => 0,
 				)
 			);
 
 			$data['ethnicities'] = get_terms(
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_ethnicity(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_ethnicity(),
 					'hide_empty' => 0,
 				)
 			);
@@ -101,7 +101,7 @@ class Rest_API {
 			'post_status' => 'publish',
 			'posts_per_page' => $posts_per_page,
 			'paged' => intval( $page ),
-			'post_type' => \WSU\Scholarships\Post_Type\post_type_slug(),
+			'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
 			'orderby' => array(
 				'title' => $order,
 			),
@@ -153,7 +153,7 @@ class Rest_API {
 		if ( $filter_grade ) {
 			$grade = get_terms(
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_grade(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_grade(),
 					'fields' => 'ids',
 				)
 			);
@@ -162,12 +162,12 @@ class Rest_API {
 				$scholarships_query_args['tax_query'][] = array(
 					'relation' => 'OR',
 					array(
-						'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_grade(),
+						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_grade(),
 						'field' => 'term_id',
 						'terms' => $filter_grade,
 					),
 					array(
-						'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_grade(),
+						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_grade(),
 						'field' => 'term_id',
 						'terms' => array_diff( $grade, array( $filter_grade ) ),
 						'operator' => 'NOT IN',
@@ -194,7 +194,7 @@ class Rest_API {
 		}
 
 		// State of Residence meta parameters.
-		if ( $filter_state && in_array( $filter_state, \WSU\Scholarships\Post_Type\states(), true ) ) {
+		if ( $filter_state && in_array( $filter_state, \VCUL\Directory\Post_Type\states(), true ) ) {
 			$scholarships_query_args['meta_query'][] = array(
 				'relation' => 'OR',
 				array(
@@ -212,7 +212,7 @@ class Rest_API {
 		if ( $filter_citizenship ) {
 			$citizenship = get_terms(
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_citizenship(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_citizenship(),
 					'fields' => 'ids',
 				)
 			);
@@ -221,12 +221,12 @@ class Rest_API {
 				$scholarships_query_args['tax_query'][] = array(
 					'relation' => 'OR',
 					array(
-						'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_citizenship(),
+						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_citizenship(),
 						'field' => 'term_id',
 						'terms' => $filter_citizenship,
 					),
 					array(
-						'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_citizenship(),
+						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_citizenship(),
 						'field' => 'term_id',
 						'terms' => array_diff( $citizenship, array( $filter_citizenship ) ),
 						'operator' => 'NOT IN',
@@ -240,7 +240,7 @@ class Rest_API {
 			$scholarships_query_args['tax_query'][] = array(
 				'relation' => 'OR',
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_major(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_major(),
 					'field' => 'term_id',
 					'terms' => explode( ',', $filter_majors ),
 					'operator' => 'IN',
@@ -253,7 +253,7 @@ class Rest_API {
 			$scholarships_query_args['tax_query'][] = array(
 				'relation' => 'OR',
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_gender(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_gender(),
 					'field' => 'term_id',
 					'terms' => explode( ',', $filter_identities ),
 					'operator' => 'IN',
@@ -266,7 +266,7 @@ class Rest_API {
 			$scholarships_query_args['tax_query'][] = array(
 				'relation' => 'OR',
 				array(
-					'taxonomy' => \WSU\Scholarships\Post_Type\taxonomy_slug_ethnicity(),
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_ethnicity(),
 					'field' => 'term_id',
 					'terms' => explode( ',', $filter_ethnicities ),
 					'operator' => 'IN',
@@ -447,7 +447,7 @@ class Rest_API {
 	public static function register_endpoints() {
 
 		register_rest_route(
-			'wsu-scholarships/v1',
+			'vcul-directory/v1',
 			'get-scholarships',
 			array(
 				'methods'             => 'GET',
@@ -457,7 +457,7 @@ class Rest_API {
 		);
 
 		register_rest_route(
-			'wsu-scholarships/v1',
+			'vcul-directory/v1',
 			'get-filters',
 			array(
 				'methods'             => 'GET',

@@ -1,11 +1,11 @@
 {
-  "name": "wsuwp-scholarships",
+  "name": "vcul-directory",
   "version": "0.2.2",
   "repository": {
     "type": "git",
-    "url": "https://github.com/washingtonstateuniversity/wsuwp-plugin-scholarships"
+    "url": "https://github.com/washingtonstateuniversity/vcul-plugin-scholarships"
   },
-  "author": "washingtonstateuniversity",
+  "author": "vculwebteam",
   "license": "GPL-2.0+",
   "scripts": {
     "build:old": "grunt default --force",

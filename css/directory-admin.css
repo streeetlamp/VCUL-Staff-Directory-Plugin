@@ -1,0 +1,36 @@
+.vcul-directory-fieldset {
+	display: -ms-flexbox;
+	display: flex;
+	margin-bottom: 1rem;
+}
+
+.vcul-directory-fieldset label {
+	width: 100%;
+}
+
+.vcul-directory-fieldset label + label,
+.vcul-directory-fieldset div label {
+	margin-left: 1rem;
+}
+
+.vcul-directory-fieldset div {
+	-ms-flex: 1;
+	    flex: 1;
+}
+
+.vcul-directory-fieldset select {
+	font-size: 1em;
+	margin: .5em 0 0 1rem;
+}
+
+#wp-directory_org-wrap {
+	margin-top: 1em;
+}
+
+[name^="wsuwp_directory"]:not(:focus):invalid {
+	border-color: #c60c30;
+}
+
+.misc-pub-revisions {
+	display: none;
+}
