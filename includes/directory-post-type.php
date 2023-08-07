@@ -112,6 +112,7 @@ function register_post_type() {
 		'search_items' => 'Search Directory',
 		'not_found' => 'No entries found',
 		'not_found_in_trash' => 'No entries found in trash',
+		'featured_image' => 'Profile Photo',
 	);
 
 	$args = array(
@@ -259,7 +260,6 @@ function display_Directory_meta_box( $post ) {
 	$email = get_post_meta( $post->ID, 'directory_email', true );
 	$phone = get_post_meta( $post->ID, 'directory_phone', true );
 	$address = get_post_meta( $post->ID, 'directory_address', true );
-	$photo = get_post_meta( $post->ID, 'directory_photo', true );
 
 	wp_nonce_field( 'save-vcul-directory-meta', '_vcul_directory_meta_nonce' );
 	?>
@@ -270,40 +270,6 @@ function display_Directory_meta_box( $post ) {
 		<label>Pronouns<br />
 			<input type="text" class="widefat" name="directory_pronouns" value="<?php echo esc_attr( $pronouns ); ?>" />
 		</label>
-
-				<div class="wsu-person-photo-collection-backdrop wsu-person-photo-collection-close">
-			<div class="wsu-person-photo-collection">
-				<?php
-				// Add the featured image to the photos array.
-				if ( has_post_thumbnail() ) {
-					$photos[] = get_post_thumbnail_id();
-				}
-
-				if ( $photos && is_array( $photos ) ) {
-					foreach ( $photos as $photo_id ) {
-						if ( is_string( get_post_status( $photo_id ) ) ) {
-							?>
-							<div class="wsu-person-photo-wrapper">
-								<img src="<?php echo esc_url( wp_get_attachment_image_src( $photo_id )[0] ); ?>"
-									alt="<?php echo esc_attr( $post->post_title ); ?>" />
-								<button type="button" class="wsu-person-remove">
-									<span class="screen-reader-text">Delete</span>
-								</button>
-								<input type="hidden" name="_wsuwp_profile_photos[]" value="<?php echo esc_attr( $photo_id ); ?>" />
-							</div>
-							<?php
-						}
-					}
-				}
-				?>
-				<button type="button" class="wsu-person-add-photo">+ Add another photo</button>
-
-				<div class="wsu-person-photo-collection-toolbar">
-					<button type="button" class="wsu-person-photo-collection-close button button-primary button-large">Update</button>
-				</div>
-			</div>
-
-		</div>
 	</div>
 
 	<p><strong>Contact</strong></p>
