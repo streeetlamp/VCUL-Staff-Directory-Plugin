@@ -14,8 +14,8 @@ class Page_Template {
 			$paper = get_post_meta( $id, 'scholarship_app_paper', true );
 			$online = get_post_meta( $id, 'scholarship_app_online', true );
 			$site = get_post_meta( $id, 'scholarship_site', true );
-			$email = get_post_meta( $id, 'scholarship_email', true );
-			$phone = get_post_meta( $id, 'scholarship_phone', true );
+			$email = get_post_meta( $id, 'directory_email', true );
+			$phone = get_post_meta( $id, 'directory_phone', true );
 			$address = get_post_meta( $id, 'scholarship_address', true );
 			$org_name = get_post_meta( $id, 'scholarship_org_name', true );
 			$org = get_post_meta( $id, 'scholarship_org', true );

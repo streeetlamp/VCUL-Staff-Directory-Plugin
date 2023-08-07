@@ -66,9 +66,9 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
-		'directory_photo' => array(
-			'type' => 'array',
-			'description' => 'A users directory photo.',
+		'directory_pronouns' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
 		),
 	);
 }
@@ -253,7 +253,7 @@ function add_meta_boxes() {
  *
  * @param WP_Post $post Object for the post currently being edited.
  */
-function display_Directory_meta_box( $post ) {
+function display_directory_meta_box( $post ) {
 	$title = get_post_meta( $post->ID, 'directory_title', true );
 	$pronouns = get_post_meta( $post->ID, 'directory_pronouns', true );
 	$site = get_post_meta( $post->ID, 'directory_site', true );
@@ -284,7 +284,7 @@ function display_Directory_meta_box( $post ) {
 			<input type="email" class="widefat" name="directory_email" value="<?php echo esc_attr( $email ); ?>" />
 		</label>
 
-		<label>Phone (555-555-5555)<br />
+		<label>Phone (ex: 804-555-5555)<br />
 			<input type="tel" class="widefat" name="directory_phone" pattern="\d{3}[\-]\d{3}[\-]\d{4}" value="<?php echo esc_attr( $phone ); ?>" />
 		</label>
 
@@ -347,7 +347,7 @@ function save_post( $post_id, $post ) {
 		return;
 	}
 
-	if ( ! isset( $_POST['_vcul_Directory_meta_nonce'] ) || ! wp_verify_nonce( $_POST['_vcul_Directory_meta_nonce'], 'save-vcul-Directory-meta' ) ) {
+	if ( ! isset( $_POST['_vcul_directory_meta_nonce'] ) || ! wp_verify_nonce( $_POST['_vcul_directory_meta_nonce'], 'save-vcul-directory-meta' ) ) {
 		return;
 	}
 
@@ -374,7 +374,7 @@ function wp_enqueue_scripts() {
 	}
 }
 
-// add_filter( 'body_class', 'VCUL\Directory\Post_Type\body_class' );
+add_filter( 'body_class', 'VCUL\Directory\Post_Type\body_class' );
 /**
  * Add 'section-Directory' as a body class when individual Directory are being displayed.
  *
@@ -426,14 +426,14 @@ function header_elements( $headers ) {
  */
 function menu_class( $classes, $item, $args ) {
 	$spine_menu = in_array( $args->menu, array( 'site', 'offsite' ), true );
-	$options = get_option( 'Directory_settings' );
+	$options = get_option( 'directory_settings' );
 
 	if ( $spine_menu && $options && isset( $options['active_menu_item'] ) ) {
-		$Directory = is_singular( post_type_slug() );
+		$directory = is_singular( post_type_slug() );
 		$search_results = ( isset( $options['search_page'] ) && is_page( $options['search_page'] ) );
 		$active_item = ( get_permalink( $options['active_menu_item'] ) === $item->url );
 
-		if ( $active_item && ( $Directory || $search_results ) ) {
+		if ( $active_item && ( $directory || $search_results ) ) {
 			$classes[] = 'active';
 		}
 	}
