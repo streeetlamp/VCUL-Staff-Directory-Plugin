@@ -102,13 +102,13 @@ add_action( 'init', 'VCUL\Directory\Post_Type\register_post_type', 12 );
  */
 function register_post_type() {
 	$labels = array(
-		'name' => 'Directory',
-		'singular_name' => 'Directory Entry',
-		'all_items' => 'All Directory Entries',
-		'view_item' => 'View Directory Entry',
-		'add_new_item' => 'Add New Directory Entry',
-		'edit_item' => 'Edit Directory Entry',
-		'update_item' => 'Update Directory',
+		'name' => 'Staff Directory',
+		'singular_name' => 'Staff Member',
+		'all_items' => 'All Entries',
+		'view_item' => 'View Staff Member',
+		'add_new_item' => 'Add New Staff Member',
+		'edit_item' => 'Edit Staff Member',
+		'update_item' => 'Update Staff Member',
 		'search_items' => 'Search Directory',
 		'not_found' => 'No entries found',
 		'not_found_in_trash' => 'No entries found in trash',
