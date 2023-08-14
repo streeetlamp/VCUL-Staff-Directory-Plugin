@@ -117,7 +117,7 @@ function register_post_type() {
 
 	$args = array(
 		'labels' => $labels,
-		'description' => 'Aid granted to a student to support his or her education.',
+		'description' => 'Supporting internal and public staff directory.',
 		'public' => true,
 		'menu_position' => 5,
 		'menu_icon' => 'dashicons-id-alt',
@@ -164,8 +164,9 @@ function register_taxonomies() {
 		'labels' => $labels,
 		'description' => 'Directory expertise criteria.',
 		'public' => true,
-		'hierarchical' => true,
+		'hierarchical' => false,
 		'show_admin_column' => true,
+		'show_in_rest' => true,
 	);
 
 	register_taxonomy( taxonomy_slug_expertise(), post_type_slug(), $args );
@@ -191,8 +192,9 @@ function register_taxonomies() {
 		'labels' => $labels,
 		'description' => 'Directory department criteria.',
 		'public' => true,
-		'hierarchical' => true,
+		'hierarchical' => false,
 		'show_admin_column' => true,
+		'show_in_rest' => true,
 	);
 
 	register_taxonomy( taxonomy_slug_department(), post_type_slug(), $args );
@@ -296,34 +298,6 @@ function display_directory_meta_box( $post ) {
 	<?php
 }
 
-
-add_filter( 'wsuwp_taxonomy_metabox_post_types', 'VCUL\Directory\Post_Type\taxonomy_meta_box' );
-/**
- * Displays a meta box with the Select2 interface provided by the University Taxonomy plugin.
- *
- * @since 0.1.1
- *
- * @param array $post_types Post types and their associated taxonomies.
- */
-function taxonomy_meta_box( $post_types ) {
-	$post_types[ post_type_slug() ] = get_object_taxonomies( post_type_slug() );
-
-	return $post_types;
-}
-
-add_filter( 'wsuwp_taxonomy_metabox_disable_new_term_adding', 'VCUL\Directory\Post_Type\disable_new_majors' );
-/**
- * Disables the in-post interface for adding new terms to the Majors taxonomy.
- *
- * @since 0.1.1
- *
- * @param array $taxonomies Taxonomies for which to disable the interface for adding new terms.
- */
-function disable_new_majors( $taxonomies ) {
-	$taxonomies[] = taxonomy_slug_major();
-
-	return $taxonomies;
-}
 
 add_action( 'save_post', 'VCUL\Directory\Post_Type\save_post', 10, 2 );
 /**
