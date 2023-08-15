@@ -60,12 +60,35 @@ class Rest_API {
 
 		$directory_query = new \WP_Query( $directory_query_args );
 
+
+		try {
+			while ( $directory_query->have_posts() ) {
+
+				$directory_query->the_post();
+				$directory_title = get_post_meta( get_the_ID(), 'directory_title', true );
+
+				$directory_entry = array(
+					'id' => get_the_ID(),
+					'title' => get_the_title(),
+					'permalink' => get_the_permalink(),
+					'directory-title' => esc_attr( $directory_title ),
+				);
+
+				$the_directory[] = $directory_entry;
+			}
+
+			wp_reset_postdata();
+		} catch ( Exception $e ) {
+			return new \WP_Error( 'error', 'Sorry, something went wrong.', array( 'status' => 500 ) );
+		}
+
+		$data['directory'] = $the_directory;
+
 		// $data['query'] = $directory_query->request; // for debugging
 		$data['showingCount'] = $directory_query->post_count;
 		$data['totalCount'] = $directory_query->found_posts;
 		$data['numberOfPages'] = $directory_query->max_num_pages;
 
-		$data['directory'] = $directory;
 
 		return new \WP_REST_Response(
 			$data,
