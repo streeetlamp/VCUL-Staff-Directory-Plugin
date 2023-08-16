@@ -9,7 +9,7 @@ class Rest_API {
 
 		$data = array();
 
-		$data['expertise'] = get_terms(
+		$experts = get_terms(
 			array(
 				'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
 				'hide_empty' => 0,
@@ -17,7 +17,23 @@ class Rest_API {
 			)
 		);
 
-		$data['department'] = get_terms(
+		try {
+			foreach($experts as $expert) {
+
+				error_log(print_r($expert, true));
+				$expert = array(
+					'name' => $expert->name,
+					'count' => $expert->count,
+				);
+
+				$expertise_list[] = $expert;
+			}
+
+
+		$data['expertise'] = $expertise_list;
+
+
+		$data['departments'] = get_terms(
 			array(
 				'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
 				'hide_empty' => 0,
@@ -28,7 +44,9 @@ class Rest_API {
 			$data,
 			200
 		);
-
+		} catch ( Exception $e ) {
+			return new \WP_Error( 'error', 'Sorry, something went wrong.', array( 'status' => 500 ) );
+		}
 	}
 
 
@@ -69,9 +87,9 @@ class Rest_API {
 
 				$directory_entry = array(
 					'id' => get_the_ID(),
-					'title' => get_the_title(),
+					'name' => get_the_title(),
 					'permalink' => get_the_permalink(),
-					'directory-title' => esc_attr( $directory_title ),
+					'position' => esc_attr( $directory_title ),
 				);
 
 				$the_directory[] = $directory_entry;
