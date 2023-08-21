@@ -286,8 +286,8 @@ function display_directory_meta_box( $post ) {
 			<input type="email" class="widefat" name="directory_email" value="<?php echo esc_attr( $email ); ?>" />
 		</label>
 
-		<label>Phone (ex: 804-555-5555)<br />
-			<input type="tel" class="widefat" name="directory_phone" pattern="\d{3}[\-]\d{3}[\-]\d{4}" value="<?php echo esc_attr( $phone ); ?>" />
+		<label>Phone (ex: (804) 555-5555)<br />
+			<input type="tel" class="widefat" name="directory_phone" pattern="\(\d{3}\) \d{3}-\d{4}" value="<?php echo esc_attr( $phone ); ?>" />
 		</label>
 
 		<label>Address<br />

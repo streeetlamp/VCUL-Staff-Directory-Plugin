@@ -39,6 +39,15 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 		return '0.2.1';
 	}
 
+	/* 
+	* Filter to orderby directory with last name
+	*/
+	function orderby_lastname ($orderby_statement) 
+	{
+		$orderby_statement = "RIGHT(post_title, LOCATE(' ', REVERSE(post_title)) - 1) ASC";
+		return $orderby_statement;
+	}
+
 	/**
 	 * Starts things up.
 	 *
