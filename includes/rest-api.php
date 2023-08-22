@@ -8,50 +8,84 @@ class Rest_API
 	public static function get_experts(\WP_REST_Request $request)
 	{
 
-		$params = $request->get_query_params();
-		$is_search_block = $params['is-search-block'] ?? 'false';
+    $params = $request->get_query_params();
+    $is_filtered = $params['expertise'] ?? false;
 
-		$data = array();
-
-		$experts = get_terms(
-			array(
-				'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
-				'hide_empty' => 1,
-				'orderby' => 'term_id',
-			)
-		);
-
-		try {
-			foreach ($experts as $expert) {
-
-				// error_log(print_r($expert, true));
-				$expert = array(
-					'name' => $expert->name,
-					'count' => $expert->count,
-				);
-
-				$expertise_list[] = $expert;
-			}
-
-
-			$data['expertise'] = $expertise_list;
-
-
-			$data['departments'] = get_terms(
-				array(
-					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
-					'hide_empty' => 1,
-				)
-			);
-
-			return new \WP_REST_Response(
-				$data,
-				200
-			);
-		} catch (Exception $e) {
-			return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+		$expert_check = term_exists( $is_filtered,  \VCUL\Directory\Post_Type\taxonomy_slug_expertise() );
+		$expert_exists = $expert_check !== 0 && $expert_check !== null ? true : false;
+		if (!$expert_exists) {
+			return new \WP_Error('error', 'Sorry, that term does not exist.', array('status' => 500));
 		}
-	}
+
+    if ($is_filtered === false) {
+        $experts = get_terms(
+            array(
+                'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
+                'hide_empty' => 1,
+                'orderby' => 'term_id',
+            )
+        );
+
+        try {
+            foreach ($experts as $expert) {
+
+                $expert = array(
+                    'name' => $expert->name,
+                    'count' => $expert->count,
+                );
+
+                $expertise_list[] = $expert;
+            }
+
+
+            return new \WP_REST_Response(
+                $expertise_list,
+                200
+            );
+        } catch (Exception $e) {
+            return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+        }
+    } else {
+
+        $expert_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
+
+        $expert_query_args = array(
+            'posts_per_page' => -1,
+            'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
+            'tax_query' => array(
+                array(
+                        'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
+                        'field' => 'term_id',
+                        'terms' => $expert_id->term_id,
+                )
+    ));
+
+        $expert_query = new \WP_Query($expert_query_args);
+        $expert_list = array();
+
+        try {
+            while ($expert_query->have_posts()) {
+                $expert_query->the_post();
+
+                $expert = array(
+                    'name' => get_the_title(),
+                    'id' => get_the_ID(),
+                );
+
+                $expert_list[] = $expert;
+            }
+            wp_reset_postdata();
+
+        } catch (Exception $e) {
+            return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+        }
+
+        return new \WP_REST_Response(
+            $expert_list,
+            200
+        );
+    }
+}
 
 	public static function get_department(\WP_REST_Request $request)
 	{
@@ -59,7 +93,6 @@ class Rest_API
 		$filter_dept = $params['dept'];
 
 		$dept_id = get_term_by( 'name', $filter_dept, \VCUL\Directory\Post_Type\taxonomy_slug_department() );
-		$dept_id = $dept_id->term_id;
 
 		$dept_query_args = array(
 			'posts_per_page' => -1,
@@ -68,7 +101,7 @@ class Rest_API
 				array(
 						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
 						'field' => 'term_id',
-						'terms' => $dept_id,
+						'terms' => $dept_id->term_id,
 				)
     ));
 		$department_query = new \WP_Query($dept_query_args);
