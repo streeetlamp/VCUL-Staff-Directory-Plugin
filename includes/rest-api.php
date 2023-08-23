@@ -13,11 +13,8 @@ class Rest_API
 
 		$expert_check = term_exists( $is_filtered,  \VCUL\Directory\Post_Type\taxonomy_slug_expertise() );
 		$expert_exists = $expert_check !== 0 && $expert_check !== null ? true : false;
-		if (!$expert_exists) {
-			return new \WP_Error('error', 'Sorry, that term does not exist.', array('status' => 500));
-		}
 
-    if ($is_filtered === false) {
+    if (!$expert_exists) {
         $experts = get_terms(
             array(
                 'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
