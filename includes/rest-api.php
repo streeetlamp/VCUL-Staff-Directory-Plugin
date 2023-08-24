@@ -64,9 +64,18 @@ class Rest_API
             while ($expert_query->have_posts()) {
                 $expert_query->the_post();
 
+								$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
+								$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+								$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
+								
                 $expert = array(
-                    'name' => get_the_title(),
-                    'id' => get_the_ID(),
+									'id' => get_the_ID(),
+									'name' => get_the_title(),
+									'permalink' => get_the_permalink(),
+									'position' => esc_attr($directory_title),
+									'expertise' => $expertise,
+									'department' => $department[0],
+									'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
                 );
 
                 $expert_list[] = $expert;
@@ -163,7 +172,6 @@ class Rest_API
 			while ($directory_query->have_posts()) {
 
 				$directory_query->the_post();
-				// error_log(print_r(wp_get_object_terms(get_the_ID(), 'department'), true));
 
 				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
@@ -176,6 +184,7 @@ class Rest_API
 					'position' => esc_attr($directory_title),
 					'expertise' => $expertise,
 					'department' => $department[0],
+					'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 				);
 
 				$the_directory[] = $directory_entry;
@@ -187,12 +196,12 @@ class Rest_API
 		}
 		remove_filter( 'posts_orderby' , 'VCUL\Directory\orderby_lastname' );
 
-		$data['directory'] = $the_directory;
+		$data = $the_directory;
 
 		// $data['query'] = $directory_query->request; // for debugging
-		$data['showingCount'] = $directory_query->post_count;
-		$data['totalCount'] = $directory_query->found_posts;
-		$data['numberOfPages'] = $directory_query->max_num_pages;
+		// $data['showingCount'] = $directory_query->post_count;
+		// $data['totalCount'] = $directory_query->found_posts;
+		// $data['numberOfPages'] = $directory_query->max_num_pages;
 
 
 		return new \WP_REST_Response(
