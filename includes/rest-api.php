@@ -149,6 +149,7 @@ class Rest_API
 		$orderby = $params['orderBy'] ?? 'title';
 		$order = $params['order'] ?? 'ASC';
 		$page = $params['page'] ?? 1;
+		$staff = $params['staff'] ?? '';
 		add_filter( 'posts_orderby' , 'VCUL\Directory\orderby_lastname' );
 
 
@@ -160,6 +161,7 @@ class Rest_API
 			'posts_per_page' => $posts_per_page,
 			'paged' => intval($page),
 			'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
+			'name' => $staff,
 		);
 
 
@@ -179,6 +181,7 @@ class Rest_API
 
 				$directory_entry = array(
 					'id' => get_the_ID(),
+					'slug' => get_post_field( 'post_name', get_post() ),
 					'name' => get_the_title(),
 					'permalink' => get_the_permalink(),
 					'position' => esc_attr($directory_title),
