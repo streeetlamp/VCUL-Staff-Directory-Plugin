@@ -218,6 +218,8 @@ class Rest_API
 	{
 
 		// wp-json/vcul-directory/v1/get-directory
+		// get-directory?staff=first-lastname
+
 		register_rest_route(
 			'vcul-directory/v1',
 			'get-directory',
