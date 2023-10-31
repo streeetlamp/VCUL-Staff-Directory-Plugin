@@ -56,10 +56,9 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	function bootstrap() {
 		include_once __DIR__ . '/includes/directory-post-type.php';
 		// include_once __DIR__ . '/includes/directory-settings.php';
-		// include_once __DIR__ . '/includes/directory-shortcodes.php';
+		include_once __DIR__ . '/includes/directory-shortcodes.php';
 		include_once __DIR__ . '/includes/directory-contributor-role.php';
 		include_once __DIR__ . '/includes/rest-api.php';
-		// include_once __DIR__ . '/includes/page-template.php';
 	}
 
 }
