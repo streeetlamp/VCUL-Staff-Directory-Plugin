@@ -8,116 +8,150 @@ class Rest_API
 	public static function get_experts(\WP_REST_Request $request)
 	{
 
-    $params = $request->get_query_params();
-    $is_filtered = $params['expertise'] ?? false;
+		$params = $request->get_query_params();
+		$is_filtered = $params['expertise'] ?? false;
 
-		$expert_check = term_exists( $is_filtered,  \VCUL\Directory\Post_Type\taxonomy_slug_expertise() );
+		$expert_check = term_exists($is_filtered,  \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
 		$expert_exists = $expert_check !== 0 && $expert_check !== null ? true : false;
 
-    if (!$expert_exists) {
-        $experts = get_terms(
-            array(
-                'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
-                'hide_empty' => 1,
-                'orderby' => 'term_id',
-            )
-        );
+		if (!$expert_exists) {
+			$experts = get_terms(
+				array(
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
+					'hide_empty' => 1,
+					'orderby' => 'term_id',
+				)
+			);
 
-        try {
-            foreach ($experts as $expert) {
+			try {
+				foreach ($experts as $expert) {
 
-                $expert = array(
-                    'name' => $expert->name,
-                    'count' => $expert->count,
-                );
+					$expert = array(
+						'name' => $expert->name,
+						'count' => $expert->count,
+					);
 
-                $expertise_list[] = $expert;
-            }
+					$expertise_list[] = $expert;
+				}
 
 
-            return new \WP_REST_Response(
-                $expertise_list,
-                200
-            );
-        } catch (Exception $e) {
-            return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
-        }
-    } else {
+				return new \WP_REST_Response(
+					$expertise_list,
+					200
+				);
+			} catch (Exception $e) {
+				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+			}
+		} else {
 
-        $expert_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
+			$expert_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
 
-        $expert_query_args = array(
-            'posts_per_page' => -1,
-            'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
-            'tax_query' => array(
-                array(
-                        'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
-                        'field' => 'term_id',
-                        'terms' => $expert_id->term_id,
-                )
-    ));
+			$expert_query_args = array(
+				'posts_per_page' => -1,
+				'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
+				'tax_query' => array(
+					array(
+						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_expertise(),
+						'field' => 'term_id',
+						'terms' => $expert_id->term_id,
+					)
+				)
+			);
 
-        $expert_query = new \WP_Query($expert_query_args);
-        $expert_list = array();
+			$expert_query = new \WP_Query($expert_query_args);
+			$expert_list = array();
 
-        try {
-            while ($expert_query->have_posts()) {
-                $expert_query->the_post();
+			try {
+				while ($expert_query->have_posts()) {
+					$expert_query->the_post();
 
-								$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
-								$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
-								$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-								
-                $expert = array(
-									'id' => get_the_ID(),
-									'name' => get_the_title(),
-									'permalink' => get_the_permalink(),
-									'position' => esc_attr($directory_title),
-									'expertise' => $expertise,
-									'department' => $department[0],
-									'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
-                );
+					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
+					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 
-                $expert_list[] = $expert;
-            }
-            wp_reset_postdata();
+					$expert = array(
+						'id' => get_the_ID(),
+						'name' => get_the_title(),
+						'permalink' => get_the_permalink(),
+						'position' => esc_attr($directory_title),
+						'expertise' => $expertise,
+						'department' => $department[0],
+						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
+					);
 
-        } catch (Exception $e) {
-            return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
-        }
+					$expert_list[] = $expert;
+				}
+				wp_reset_postdata();
+			} catch (Exception $e) {
+				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+			}
 
-        return new \WP_REST_Response(
-            $expert_list,
-            200
-        );
-    }
-}
+			return new \WP_REST_Response(
+				$expert_list,
+				200
+			);
+		}
+	}
 
 	public static function get_department(\WP_REST_Request $request)
 	{
 		$params = $request->get_query_params();
-		$filter_dept = $params['dept'];
+		$is_filtered = $params['dept'] ?? false;
 
-		$dept_id = get_term_by( 'name', $filter_dept, \VCUL\Directory\Post_Type\taxonomy_slug_department() );
+		$dept_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
 
-		$dept_query_args = array(
-			'posts_per_page' => -1,
-			'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
-			'tax_query' => array(
+		$dept_check = term_exists($is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
+		$dept_exists = $dept_check !== 0 && $dept_check !== null ? true : false;
+
+		if (!$dept_exists) {
+			$departments = get_terms(
 				array(
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
+					'hide_empty' => 1,
+					'orderby' => 'term_id',
+				)
+			);
+
+			try {
+				foreach ($departments as $department) {
+
+					$department = array(
+						'name' => $department->name,
+						'count' => $department->count,
+					);
+
+					$department_list[] = $department;
+				}
+
+
+				return new \WP_REST_Response(
+					$department_list,
+					200
+				);
+			} catch (Exception $e) {
+				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+			}
+		} else {
+
+			$dept_query_args = array(
+				'posts_per_page' => -1,
+				'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
+				'tax_query' => array(
+					array(
 						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
 						'field' => 'term_id',
 						'terms' => $dept_id->term_id,
+					)
 				)
-    ));
-		$department_query = new \WP_Query($dept_query_args);
+			);
+			$department_query = new \WP_Query($dept_query_args);
 
 			try {
 				while ($department_query->have_posts()) {
 					$department_query->the_post();
 
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-					
+
 
 					$dept_entry = array(
 						'id' => get_the_ID(),
@@ -125,18 +159,17 @@ class Rest_API
 						'title' => $directory_title,
 					);
 					$the_department[] = $dept_entry;
-
 				}
-			wp_reset_postdata();
-
+				wp_reset_postdata();
 			} catch (Exception $e) {
-			return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
-		}
+				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+			}
 
-		return new \WP_REST_Response(
-			$the_department,
-			200
-		);
+			return new \WP_REST_Response(
+				$the_department,
+				200
+			);
+		}
 	}
 
 
@@ -150,7 +183,7 @@ class Rest_API
 		$order = $params['order'] ?? 'ASC';
 		$page = $params['page'] ?? 1;
 		$staff = $params['staff'] ?? '';
-		add_filter( 'posts_orderby' , 'VCUL\Directory\orderby_lastname' );
+		add_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
 
 
 		// $data = array( $params, $orderby, $order );
@@ -181,7 +214,7 @@ class Rest_API
 
 				$directory_entry = array(
 					'id' => get_the_ID(),
-					'slug' => get_post_field( 'post_name', get_post() ),
+					'slug' => get_post_field('post_name', get_post()),
 					'name' => get_the_title(),
 					'permalink' => get_the_permalink(),
 					'position' => esc_attr($directory_title),
@@ -197,7 +230,7 @@ class Rest_API
 		} catch (Exception $e) {
 			return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
 		}
-		remove_filter( 'posts_orderby' , 'VCUL\Directory\orderby_lastname' );
+		remove_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
 
 		$data = $the_directory;
 
