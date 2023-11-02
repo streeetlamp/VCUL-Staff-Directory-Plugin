@@ -151,13 +151,19 @@ class Rest_API
 					$department_query->the_post();
 
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-
+					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
+					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 
 					$dept_entry = array(
 						'id' => get_the_ID(),
 						'name' => get_the_title(),
-						'title' => $directory_title,
+						'permalink' => get_the_permalink(),
+						'position' => esc_attr($directory_title),
+						'expertise' => $expertise,
+						'department' => $department[0],
+						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 					);
+
 					$the_department[] = $dept_entry;
 				}
 				wp_reset_postdata();
