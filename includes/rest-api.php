@@ -74,6 +74,7 @@ class Rest_API
 						'name' => get_the_title(),
 						'permalink' => get_the_permalink(),
 						'position' => esc_attr($directory_title),
+						'bio' => get_the_content(),
 						'expertise' => $expertise,
 						'department' => $department[0],
 						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
@@ -161,6 +162,7 @@ class Rest_API
 						'position' => esc_attr($directory_title),
 						'expertise' => $expertise,
 						'department' => $department[0],
+						'bio' => get_the_content(),
 						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 					);
 
@@ -213,6 +215,7 @@ class Rest_API
 			while ($directory_query->have_posts()) {
 
 				$directory_query->the_post();
+				error_log(print_r($directory_query->get_posts(), true));
 
 				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
@@ -226,6 +229,7 @@ class Rest_API
 					'position' => esc_attr($directory_title),
 					'expertise' => $expertise,
 					'department' => $department[0],
+					'bio' => get_the_content(),
 					'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 				);
 
