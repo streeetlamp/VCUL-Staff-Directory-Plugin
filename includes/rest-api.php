@@ -215,7 +215,6 @@ class Rest_API
 			while ($directory_query->have_posts()) {
 
 				$directory_query->the_post();
-				error_log(print_r($directory_query->get_posts(), true));
 
 				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
