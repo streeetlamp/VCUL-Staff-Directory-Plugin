@@ -7,6 +7,8 @@ Author: VCUL Web Team
 Author URI: https://library.vcu.edu
 Plugin URI: https://github.com/
 Text Domain: vcul-directory
+
+GitHub Plugin URI: https://github.com/streeetlamp/VCUL-Staff-Directory-Plugin
 */
 
 namespace VCUL\Directory;
