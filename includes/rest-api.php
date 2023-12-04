@@ -219,6 +219,8 @@ class Rest_API
 				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
+				$directory_cv = get_post_meta( get_the_ID(), 'vcul-directory-cv', true);
+				$directory_cv = $directory_cv['url'] ?? null;
 
 				$directory_entry = array(
 					'id' => get_the_ID(),
@@ -230,6 +232,7 @@ class Rest_API
 					'department' => $department[0],
 					'bio' => get_the_content(),
 					'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
+					'cv' => $directory_cv
 				);
 
 				$the_directory[] = $directory_entry;

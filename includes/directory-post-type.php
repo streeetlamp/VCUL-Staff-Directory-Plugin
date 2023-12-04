@@ -70,6 +70,9 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
+		'vcul-directory-cv' => array(
+			'type' => 'array',
+		)
 	);
 }
 
@@ -209,6 +212,7 @@ add_action( 'init', 'VCUL\Directory\Post_Type\register_meta' );
 function register_meta() {
 	foreach ( post_meta_keys() as $key => $args ) {
 		$args['single'] = true;
+		$args['show_in_rest'] = true;
 		\register_meta( 'post', $key, $args );
 	}
 }
@@ -231,6 +235,7 @@ function admin_enqueue_scripts( $hook ) {
 
 
 add_action( 'add_meta_boxes_' . post_type_slug(), 'VCUL\Directory\Post_Type\add_meta_boxes', 10 );
+
 /**
  * Adds the metaboxes used to capture Directory information.
  *
@@ -245,6 +250,28 @@ function add_meta_boxes() {
 		'normal',
 		'high'
 	);
+	add_meta_box(
+		'vcul-directory-cv', 
+		'CV', 
+		'VCUL\Directory\Post_Type\display_directory_cv_meta_box', 		
+		post_type_slug(), 
+		'normal', 
+		'high'
+	);  
+}
+
+function display_directory_cv_meta_box() {  
+	wp_nonce_field( 'save-vcul-directory-meta', '_vcul_directory_meta_nonce' );
+	$html = '<p class="description">';
+	$html .= 'Upload your CV PDF';
+	$html .= '</p>';
+	$html .= '<input type="file" id="vcul-directory-cv" name="vcul-directory-cv" value="" size="25">';
+	$filearray = get_post_meta( get_the_ID(), 'vcul-directory-cv', true );
+	$this_file = $filearray['url'];
+	if($this_file != ""){
+		$html .= '<div style="margin-top:5px;">' . $this_file . '</div>';
+	}
+	echo $html;
 }
 
 /**
@@ -289,7 +316,7 @@ function display_directory_meta_box( $post ) {
 			<input type="tel" class="widefat" name="directory_phone" pattern="\(\d{3}\) \d{3}-\d{4}" value="<?php echo esc_attr( $phone ); ?>" />
 		</label>
 
-		<label>Address<br />
+		<label>Office Number / Location<br />
 			<input type="text" class="widefat" name="directory_address" value="<?php echo esc_attr( $address ); ?>" />
 		</label>
 
@@ -324,7 +351,7 @@ function save_post( $post_id, $post ) {
 		return;
 	}
 
-	$keys = get_registered_meta_keys( 'post' );
+	$key = get_registered_meta_keys( 'post' );
 
 	foreach ( post_meta_keys() as $key => $args ) {
 		if ( isset( $_POST[ $key ] ) && '' !== $_POST[ $key ] && isset( $args['sanitize_callback'] ) ) {
@@ -333,7 +360,30 @@ function save_post( $post_id, $post ) {
 			delete_post_meta( $post_id, $key );
 		}
 	}
+
+	if(!empty($_FILES['vcul-directory-cv']['name'])) {
+		$supported_types = array('application/pdf');
+		$arr_file_type = wp_check_filetype(basename($_FILES['vcul-directory-cv']['name']));
+		$uploaded_type = $arr_file_type['type'];
+		if(in_array($uploaded_type, $supported_types)) {
+				$upload = wp_upload_bits($_FILES['vcul-directory-cv']['name'], null, file_get_contents($_FILES['vcul-directory-cv']['tmp_name']));
+				if(isset($upload['error']) && $upload['error'] != 0) {
+						wp_die('There was an error uploading your file. The error is: ' . $upload['error']);
+				} else {
+						add_post_meta($post_id, 'vcul-directory-cv', $upload);
+						update_post_meta($post_id, 'vcul-directory-cv', $upload);
+				}
+		}
+		else {
+				wp_die("The file type that you've uploaded is not a PDF.");
+		}
 }
+}
+
+function update_edit_form() {
+	echo ' enctype="multipart/form-data"';
+}
+add_action('post_edit_form_tag', 'VCUL\Directory\Post_Type\update_edit_form');
 
 add_action( 'wp_enqueue_scripts', 'VCUL\Directory\Post_Type\wp_enqueue_scripts' );
 /**
@@ -363,25 +413,6 @@ function body_class( $classes ) {
 	}
 
 	return $classes;
-}
-
-// add_filter( 'sfs_theme_header_elements', 'VCUL\Directory\Post_Type\header_elements' );
-/**
- * Output custom page headers when viewing an individual Directory.
- *
- * @since 0.0.1
- *
- * @param array $headers Current header element values.
- *
- * @return array Modified header element values.
- */
-function header_elements( $headers ) {
-	if ( is_singular( post_type_slug() ) ) {
-		$headers['page_sup'] = 'Directory';
-		$headers['page_sub'] = 'Details';
-	}
-
-	return $headers;
 }
 
 // add_filter( 'nav_menu_css_class', 'VCUL\Directory\Post_Type\menu_class', 11, 3 );
