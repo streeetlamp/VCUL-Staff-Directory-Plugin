@@ -128,7 +128,6 @@ function register_post_type() {
 			'thumbnail',
 		),
 		'taxonomies' => array(
-			'post_tag',
 		),
 		'show_in_rest' => true,
 	);
