@@ -70,9 +70,6 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
-		'vcul-directory-cv' => array(
-			'type' => 'array',
-		)
 	);
 }
 
@@ -133,6 +130,7 @@ function register_post_type() {
 		'taxonomies' => array(
 		),
 		'show_in_rest' => true,
+		'custom-fields' => true,
 	);
 
 	\register_post_type( post_type_slug(), $args );
