@@ -76,7 +76,7 @@ class Rest_API
 						'position' => esc_attr($directory_title),
 						'bio' => get_the_content(),
 						'expertise' => $expertise,
-						'department' => $department[0],
+						'department' => $department,
 						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 					);
 
@@ -161,7 +161,7 @@ class Rest_API
 						'permalink' => get_the_permalink(),
 						'position' => esc_attr($directory_title),
 						'expertise' => $expertise,
-						'department' => $department[0],
+						'department' => $department,
 						'bio' => get_the_content(),
 						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 					);
@@ -230,7 +230,7 @@ class Rest_API
 					'permalink' => get_the_permalink(),
 					'position' => esc_attr($directory_title),
 					'expertise' => $expertise,
-					'department' => $department[0],
+					'department' => $department,
 					'bio' => get_the_content(),
 					'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
 					'cv' => $directory_cv,
