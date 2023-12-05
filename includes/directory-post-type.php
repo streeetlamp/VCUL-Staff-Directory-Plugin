@@ -70,6 +70,10 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
+		'directory_rank' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
 	);
 }
 
@@ -286,6 +290,7 @@ function display_directory_meta_box( $post ) {
 	$email = get_post_meta( $post->ID, 'directory_email', true );
 	$phone = get_post_meta( $post->ID, 'directory_phone', true );
 	$address = get_post_meta( $post->ID, 'directory_address', true );
+	$rank = get_post_meta( $post->ID, 'directory_rank', true );
 
 	wp_nonce_field( 'save-vcul-directory-meta', '_vcul_directory_meta_nonce' );
 	?>
@@ -296,6 +301,10 @@ function display_directory_meta_box( $post ) {
 		<label>Pronouns<br />
 			<input type="text" class="widefat" name="directory_pronouns" value="<?php echo esc_attr( $pronouns ); ?>" />
 		</label>
+		<label>Faculty Rank<br />
+			<input type="text" class="widefat" name="directory_rank" value="<?php echo esc_attr( $rank ); ?>" />
+		</label>
+
 	</div>
 
 	<p><strong>Contact</strong></p>
