@@ -269,9 +269,8 @@ function display_directory_cv_meta_box() {
 	$html .= '</p>';
 	$html .= '<input type="file" id="vcul-directory-cv" name="vcul-directory-cv" value="" size="25">';
 	$filearray = get_post_meta( get_the_ID(), 'vcul-directory-cv', true );
-	$this_file = $filearray['url'];
-	if($this_file != ""){
-		$html .= '<div style="margin-top:5px;">' . $this_file . '</div>';
+	if (isset($filearray['url'])) {
+		$html .= '<div style="margin-top:5px;">' . $filearray['url'] . '</div>';
 	}
 	echo $html;
 }

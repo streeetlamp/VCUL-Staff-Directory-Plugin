@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: VCUL Staff Directory
-Version: 0.0.6
+Version: 0.0.7
 Description: A WordPress plugin for managing a staff directory.
 Author: VCUL Web Team
 Author URI: https://library.vcu.edu
@@ -38,7 +38,7 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	 * @return string
 	 */
 	function plugin_version() {
-		return '0.2.1';
+		return '0.0.7';
 	}
 
 	/* 
