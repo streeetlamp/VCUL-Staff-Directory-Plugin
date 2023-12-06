@@ -74,6 +74,10 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
+		'directory_libcal' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'esc_url_raw',
+		),
 	);
 }
 
@@ -290,6 +294,7 @@ function display_directory_meta_box( $post ) {
 	$phone = get_post_meta( $post->ID, 'directory_phone', true );
 	$address = get_post_meta( $post->ID, 'directory_address', true );
 	$rank = get_post_meta( $post->ID, 'directory_rank', true );
+	$libcal = get_post_meta( $post->ID, 'directory_libcal', true );
 
 	wp_nonce_field( 'save-vcul-directory-meta', '_vcul_directory_meta_nonce' );
 	?>
@@ -324,6 +329,10 @@ function display_directory_meta_box( $post ) {
 
 		<label>Office Number / Location<br />
 			<input type="text" class="widefat" name="directory_address" value="<?php echo esc_attr( $address ); ?>" />
+		</label>
+
+		<label>LibCal Scheduling Link<br />
+			<input type="text" class="widefat" name="directory_libcal" value="<?php echo esc_attr( $libcal ); ?>" />
 		</label>
 
 	</div>
