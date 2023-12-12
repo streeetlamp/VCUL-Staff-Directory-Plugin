@@ -78,6 +78,10 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
 		),
+		'internal_phone_only' => array(
+			'type' => 'boolean',
+			'sanitize_callback' => 'VCUL\Directory\Post_Type\sanitize_checkbox',
+		),
 	);
 }
 
@@ -295,6 +299,8 @@ function display_directory_meta_box( $post ) {
 	$address = get_post_meta( $post->ID, 'directory_address', true );
 	$rank = get_post_meta( $post->ID, 'directory_rank', true );
 	$libcal = get_post_meta( $post->ID, 'directory_libcal', true );
+	$internal_phone_only = get_post_meta( $post->ID, 'internal_phone_only', true );
+
 
 	wp_nonce_field( 'save-vcul-directory-meta', '_vcul_directory_meta_nonce' );
 	?>
@@ -324,8 +330,11 @@ function display_directory_meta_box( $post ) {
 		</label>
 
 		<label>Phone (ex: (804) 555-5555)<br />
-			<input type="tel" class="widefat" name="directory_phone" pattern="\(\d{3}\) \d{3}-\d{4}" value="<?php echo esc_attr( $phone ); ?>" />
+			<input type="tel" class="widefat" style="margin-bottom:5px;" name="directory_phone" pattern="\(\d{3}\) \d{3}-\d{4}" value="<?php echo esc_attr( $phone ); ?>" />
+			<input value="1" type="checkbox" name="internal_phone_only"<?php checked( $internal_phone_only, 1 ); ?> />Internal Only
 		</label>
+
+
 
 		<label>Office Number / Location<br />
 			<input type="text" class="widefat" name="directory_address" value="<?php echo esc_attr( $address ); ?>" />

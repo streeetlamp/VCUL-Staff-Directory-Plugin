@@ -2,6 +2,8 @@
 
 namespace VCUL\Plugin\Directory;
 
+use function PHPSTORM_META\type;
+
 class Rest_API
 {
 	// Debug ?_envelope&_wpnonce=5xti%20DfaS%20Y1hC%20GUmQ%20lKLZ%20Fe53
@@ -224,6 +226,8 @@ class Rest_API
 				$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
 				$libcal_link = get_post_meta( get_the_ID(), 'directory_libcal', true);
 				$pronouns = get_post_meta( get_the_ID(), 'directory_pronouns', true);
+				$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
+				$phone = $internal_phone ? null : get_post_meta( get_the_ID(), 'directory_phone', true);
 
 				$directory_entry = array(
 					'id' => get_the_ID(),
@@ -239,6 +243,7 @@ class Rest_API
 					'rank' => $faculty_rank,
 					'libcal_link' => $libcal_link,
 					'pronouns' => $pronouns,
+					'phone' => $phone,
 				);
 
 				$the_directory[] = $directory_entry;
