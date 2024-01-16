@@ -78,6 +78,10 @@ function post_meta_keys() {
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
 		),
+		'directory_guides' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_js',
+		),
 		'internal_phone_only' => array(
 			'type' => 'boolean',
 			'sanitize_callback' => 'VCUL\Directory\Post_Type\sanitize_checkbox',
@@ -103,6 +107,10 @@ function sanitize_checkbox( $value ) {
 	}
 
 	return $value;
+}
+
+function sanitize_js( $value ) {
+	return base64_encode($value);
 }
 
 add_action( 'init', 'VCUL\Directory\Post_Type\register_post_type', 12 );
@@ -299,6 +307,7 @@ function display_directory_meta_box( $post ) {
 	$address = get_post_meta( $post->ID, 'directory_address', true );
 	$rank = get_post_meta( $post->ID, 'directory_rank', true );
 	$libcal = get_post_meta( $post->ID, 'directory_libcal', true );
+	$guides = get_post_meta( $post->ID, 'directory_guides', true );
 	$internal_phone_only = get_post_meta( $post->ID, 'internal_phone_only', true );
 
 
@@ -334,16 +343,23 @@ function display_directory_meta_box( $post ) {
 			<input value="1" type="checkbox" name="internal_phone_only"<?php checked( $internal_phone_only, 1 ); ?> />Internal Only
 		</label>
 
-
-
 		<label>Office Number / Location<br />
 			<input type="text" class="widefat" name="directory_address" value="<?php echo esc_attr( $address ); ?>" />
 		</label>
+
+	</div>
+
+	<div class="vcul-directory-fieldset">
+	
+		<hr>
 
 		<label>LibCal Scheduling Link<br />
 			<input type="text" class="widefat" name="directory_libcal" value="<?php echo esc_attr( $libcal ); ?>" />
 		</label>
 
+		<label>Research Guides<br />
+			<input type="text" class="widefat" name="directory_guides" value="<?php echo esc_attr( $guides ); ?>" />
+		</label>
 	</div>
 	<?php
 }

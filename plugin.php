@@ -50,6 +50,17 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 		return $orderby_statement;
 	}
 
+	/* 
+	* Checking if origin is same AND if the field is marked private or not. If origin 	is the same (meaning the request is coming from the same server) and the field is NOT marked private then we will display private fields.
+	*/
+	function privacy_check ($origin, $field = false) 
+	{
+		if ($origin == 'same-origin' || $field == false) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Starts things up.
 	 *

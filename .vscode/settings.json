@@ -3,5 +3,6 @@
     "pcntl",
     "wordpress",
     "*"
-  ]
+  ],
+  "git.ignoreLimitWarning": true
 }

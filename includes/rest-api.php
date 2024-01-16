@@ -2,8 +2,6 @@
 
 namespace VCUL\Plugin\Directory;
 
-use function PHPSTORM_META\type;
-
 class Rest_API
 {
 	// Debug ?_envelope&_wpnonce=5xti%20DfaS%20Y1hC%20GUmQ%20lKLZ%20Fe53
@@ -187,6 +185,7 @@ class Rest_API
 	{
 
 		$params = $request->get_query_params();
+		// error_log(\VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE']));
 
 		$posts_per_page = $params['postsPerPage'] ?? 20;
 		$orderby = $params['orderBy'] ?? 'title';
@@ -227,7 +226,10 @@ class Rest_API
 				$libcal_link = get_post_meta( get_the_ID(), 'directory_libcal', true);
 				$pronouns = get_post_meta( get_the_ID(), 'directory_pronouns', true);
 				$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
-				$phone = $internal_phone ? null : get_post_meta( get_the_ID(), 'directory_phone', true);
+				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
+				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
+				$email = get_post_meta( get_the_ID(), 'directory_email', true);
+				$guides = get_post_meta( get_the_ID(), 'directory_guides', true);
 
 				$directory_entry = array(
 					'id' => get_the_ID(),
@@ -244,6 +246,9 @@ class Rest_API
 					'libcal_link' => $libcal_link,
 					'pronouns' => $pronouns,
 					'phone' => $phone,
+					'email' => $email,
+					'location' => $directory_address,
+					'guides' => $guides
 				);
 
 				$the_directory[] = $directory_entry;
@@ -310,12 +315,11 @@ class Rest_API
 		);
 	}
 
-
 	public static function init()
 	{
-
 		add_action('rest_api_init', __CLASS__ . '::register_endpoints');
 	}
+
 }
 
 Rest_API::init();
