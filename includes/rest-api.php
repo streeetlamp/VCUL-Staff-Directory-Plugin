@@ -187,7 +187,7 @@ class Rest_API
 		$params = $request->get_query_params();
 		// error_log(\VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE']));
 
-		$posts_per_page = $params['postsPerPage'] ?? 20;
+		$posts_per_page = $params['postsPerPage'] ?? -1;
 		$orderby = $params['orderBy'] ?? 'title';
 		$order = $params['order'] ?? 'ASC';
 		$page = $params['page'] ?? 1;
@@ -210,7 +210,6 @@ class Rest_API
 		$directory = array();
 
 		$directory_query = new \WP_Query($directory_query_args);
-
 
 		try {
 			while ($directory_query->have_posts()) {
