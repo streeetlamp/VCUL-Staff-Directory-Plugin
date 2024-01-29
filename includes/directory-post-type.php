@@ -78,6 +78,10 @@ function post_meta_keys()
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
+		'directory_pro_title' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
 		'directory_libcal' => array(
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
@@ -331,6 +335,7 @@ function display_directory_meta_box($post)
 	$rank = get_post_meta($post->ID, 'directory_rank', true);
 	$libcal = get_post_meta($post->ID, 'directory_libcal', true);
 	$guides = get_post_meta($post->ID, 'directory_guides', true);
+	$protitle = get_post_meta($post->ID, 'directory_pro_title', true);
 	$internal_phone_only = get_post_meta($post->ID, 'internal_phone_only', true);
 
 
@@ -346,7 +351,9 @@ function display_directory_meta_box($post)
 		<label>Faculty Rank<br />
 			<input type="text" class="widefat" name="directory_rank" value="<?php echo esc_attr($rank); ?>" />
 		</label>
-
+		<label>Professional Title<br />
+			<input type="text" class="widefat" name="directory_pro_title" value="<?php echo esc_attr($protitle); ?>" />
+		</label>
 	</div>
 
 	<p><strong>Contact</strong></p>

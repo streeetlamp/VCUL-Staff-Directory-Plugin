@@ -229,6 +229,7 @@ class Rest_API
 				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
 				$email = get_post_meta( get_the_ID(), 'directory_email', true);
 				$guides = get_post_meta( get_the_ID(), 'directory_guides', true);
+				$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
 				$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
 				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
 				
@@ -253,7 +254,8 @@ class Rest_API
 					'phone' => $phone,
 					'email' => $email,
 					'location' => $directory_address,
-					'guides' => $guides
+					'guides' => $guides,
+					'protitle' => $protitle
 				);
 
 				$the_directory[] = $directory_entry;
