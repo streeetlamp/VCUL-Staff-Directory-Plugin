@@ -1,8 +1,8 @@
 {
-  "name": "washingtonstateuniversity/vcul-plugin-scholarships",
+  "name": "vcul/vcul-plugin-directory",
   "authors": [
     {
-      "name": "Washington State University"
+      "name": "Virginia Commonwealth University Libraries"
     }
   ],
   "require-dev": {

@@ -180,6 +180,27 @@ class Rest_API
 		}
 	}
 
+	public static function get_settings(\WP_REST_Request $request)
+	{
+		$params = $request->get_query_params();
+		$org_chart = get_option( 'directory_settings' );
+		
+		$settings_array = array();
+
+			try {
+				$settings_array = [
+					"org_chart" => $org_chart['org_chart'],
+				];
+
+				return new \WP_REST_Response(
+					$settings_array,
+					200
+				);
+			} catch (Exception $e) {
+				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+			}
+
+	}
 
 	public static function get_directory(\WP_REST_Request $request)
 	{
@@ -305,6 +326,17 @@ class Rest_API
 			array(
 				'methods'             => 'GET',
 				'callback'            => array(__CLASS__, 'get_experts'),
+				'permission_callback' => '__return_true'
+			)
+		);
+
+		// /wp-json/vcul-directory/v1/get-settings
+		register_rest_route(
+			'vcul-directory/v1',
+			'get-settings',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array(__CLASS__, 'get_settings'),
 				'permission_callback' => '__return_true'
 			)
 		);

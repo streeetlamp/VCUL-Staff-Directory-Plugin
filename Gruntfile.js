@@ -46,7 +46,7 @@ module.exports = function( grunt ) {
 					node: true     // Define globals available when running in Node.
 				}
 			},
-			scholarships_script: {
+			directory_script: {
 				src: [ "src/js/*.js" ],
 				options: {
 					bitwise: true,
@@ -67,8 +67,8 @@ module.exports = function( grunt ) {
 
 		uglify: {
 			dist: {
-				src: "src/js/scholarships.js",
-                dest: "js/scholarships.min.js"
+				src: "src/js/directory.js",
+				dest: "js/directory.min.js"
 			}
 		},
 
