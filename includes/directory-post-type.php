@@ -368,8 +368,8 @@ function display_directory_meta_box($post)
 			<input type="email" class="widefat" name="directory_email" value="<?php echo esc_attr($email); ?>" />
 		</label>
 
-		<label>Phone (ex: (804) 555-5555)<br />
-			<input type="tel" class="widefat" style="margin-bottom:5px;" name="directory_phone" pattern="\(\d{3}\) \d{3}-\d{4}" value="<?php echo esc_attr($phone); ?>" />
+		<label>Phone (ex: (804) 555-5555 or +974-1234-0555)<br />
+			<input type="tel" class="widefat" style="margin-bottom:5px;" name="directory_phone" value="<?php echo esc_attr($phone); ?>" />
 			<input value="1" type="checkbox" name="internal_phone_only" <?php checked($internal_phone_only, 1); ?> />Internal Only
 		</label>
 
