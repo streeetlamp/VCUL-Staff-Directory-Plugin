@@ -257,6 +257,11 @@ class Rest_API
 				if ($headshot == false) {
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
 				}
+
+				if ($guides) {
+					$resp = wp_remote_get( $guides );
+					$guides = $resp['body'];
+				}
 				
 				$directory_entry = array(
 					'id' => get_the_ID(),
