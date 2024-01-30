@@ -259,8 +259,21 @@ class Rest_API
 				}
 
 				if ($guides) {
-					$resp = wp_remote_get( $guides );
-					$guides = $resp['body'];
+					try {
+						$response = wp_remote_get( $guides, array(
+							'headers' => array(
+								'Accept' => 'text/html',
+							)
+						) );
+						if ( ( !is_wp_error($response)) && (200 === wp_remote_retrieve_response_code( $response ) ) ) {
+							$guides = $response['body'];
+						} else {
+							$guides = null;
+						}
+					} catch( \Exception $ex ) {
+						$guides = null;
+						error_log(print_r($ex, true));
+					}
 				}
 				
 				$directory_entry = array(
