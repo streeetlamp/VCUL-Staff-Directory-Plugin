@@ -555,7 +555,7 @@ add_filter('wp_revisions_to_keep', 'VCUL\Directory\Post_Type\revisions_to_keep',
 function revisions_to_keep($num, $post)
 {
 	if (post_type_slug() === $post->post_type) {
-		$num = 1;
+		$num = 3;
 	}
 
 	return $num;
