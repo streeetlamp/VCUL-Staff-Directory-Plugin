@@ -39,6 +39,18 @@ function taxonomy_slug_department()
 	return 'department';
 }
 
+/**
+ * Provides the subject specialists taxonomy slug.
+ *
+ * @since 0.0.1
+ *
+ * @return string
+ */
+function taxonomy_slug_specialists()
+{
+	return 'specialist';
+}
+
 
 /**
  * Provides an array of post meta keys associated with the directory.
@@ -139,14 +151,14 @@ function register_post_type()
 	$labels = array(
 		'name' => 'Staff Directory',
 		'singular_name' => 'Staff Member',
-		'all_items' => 'All Entries',
+		'all_items' => 'All Staff',
 		'view_item' => 'View Staff Member',
 		'add_new_item' => 'Add New Staff Member',
 		'edit_item' => 'Edit Staff Member',
 		'update_item' => 'Update Staff Member',
 		'search_items' => 'Search Directory',
-		'not_found' => 'No entries found',
-		'not_found_in_trash' => 'No entries found in trash',
+		'not_found' => 'No staff found',
+		'not_found_in_trash' => 'No staff found in trash',
 		'featured_image' => 'Profile Photo',
 	);
 
@@ -178,6 +190,8 @@ add_action('init', 'VCUL\Directory\Post_Type\register_taxonomies', 12);
  */
 function register_taxonomies()
 {
+
+	/* Register Expertise tax */
 	$labels = array(
 		'name' => 'Expertise',
 		'singular_name' => 'Expertise',
@@ -197,7 +211,7 @@ function register_taxonomies()
 
 	$args = array(
 		'labels' => $labels,
-		'description' => 'Directory expertise criteria.',
+		'description' => 'Directory Expertise',
 		'public' => true,
 		'hierarchical' => false,
 		'show_admin_column' => true,
@@ -206,6 +220,7 @@ function register_taxonomies()
 
 	register_taxonomy(taxonomy_slug_expertise(), post_type_slug(), $args);
 
+	/* Register Department tax */
 	$labels = array(
 		'name' => 'Department',
 		'singular_name' => 'Department',
@@ -225,7 +240,7 @@ function register_taxonomies()
 
 	$args = array(
 		'labels' => $labels,
-		'description' => 'Directory department criteria.',
+		'description' => 'Directory Departments',
 		'public' => true,
 		'hierarchical' => false,
 		'show_admin_column' => true,
@@ -233,6 +248,35 @@ function register_taxonomies()
 	);
 
 	register_taxonomy(taxonomy_slug_department(), post_type_slug(), $args);
+
+		/* Register liaison tax */
+		$labels = array(
+		'name' => 'Subject Specialties',
+		'singular_name' => 'Subject Specialty',
+		'all_items' => 'All Subjects',
+		'edit_item' => 'Edit Subject',
+		'view_item' => 'View Subject',
+		'update_item' => 'Update Subject',
+		'add_new_item' => 'Add New Subject',
+		'new_item_name' => 'New Subject',
+		'search_items' => 'Search Subjects',
+		'popular_items' => 'Popular Subjects',
+		'separate_items_with_commas' => 'Separate subject areas with commas',
+		'add_or_remove_items' => 'Add or remove subject areas',
+		'choose_from_most_used' => 'Choose from the most used subject areas',
+		'not_found' => 'No subject area found',
+	);
+
+	$args = array(
+		'labels' => $labels,
+		'description' => 'Library Specialists',
+		'public' => true,
+		'hierarchical' => true,
+		'show_admin_column' => true,
+		'show_in_rest' => true,
+	);
+
+	register_taxonomy(taxonomy_slug_specialists(), post_type_slug(), $args);
 }
 
 add_action('init', 'VCUL\Directory\Post_Type\register_meta');
