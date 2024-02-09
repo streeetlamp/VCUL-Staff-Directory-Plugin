@@ -271,7 +271,7 @@ function register_taxonomies()
 		'labels' => $labels,
 		'description' => 'Library Specialists',
 		'public' => true,
-		'hierarchical' => true,
+		'hierarchical' => false,
 		'show_admin_column' => true,
 		'show_in_rest' => true,
 	);
@@ -699,6 +699,7 @@ function disable_taxonomy_translation_support($taxonomies)
 	$unset_taxonomies = array(
 		taxonomy_slug_expertise(),
 		taxonomy_slug_department(),
+		taxonomy_slug_specialists(),
 	);
 
 	$taxonomies = array_diff($taxonomies, $unset_taxonomies);
