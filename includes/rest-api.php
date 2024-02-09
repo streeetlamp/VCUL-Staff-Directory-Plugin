@@ -151,19 +151,37 @@ class Rest_API
 				while ($department_query->have_posts()) {
 					$department_query->the_post();
 
-					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
+
 					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
+					$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
+					$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
+					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
+					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
+					$email = get_post_meta( get_the_ID(), 'directory_email', true);
+					$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
+					$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
+					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+
+					if ($headshot == false) {
+						$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+					}
 
 					$dept_entry = array(
 						'id' => get_the_ID(),
+						'slug' => get_post_field('post_name', get_post()),
 						'name' => get_the_title(),
 						'permalink' => get_the_permalink(),
 						'position' => esc_attr($directory_title),
 						'expertise' => $expertise,
 						'department' => $department,
-						'bio' => apply_filters( 'the_content', get_the_content() ),
-						'headshot' => wp_get_attachment_url(get_post_thumbnail_id()),
+						'headshot' => $headshot,
+						'rank' => $faculty_rank,
+						'phone' => $phone,
+						'email' => $email,
+						'location' => $directory_address,
+						'protitle' => $protitle
 					);
 
 					$the_department[] = $dept_entry;
@@ -231,6 +249,7 @@ class Rest_API
 		$directory = array();
 
 		$directory_query = new \WP_Query($directory_query_args);
+
 
 		try {
 			while ($directory_query->have_posts()) {
