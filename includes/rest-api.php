@@ -111,6 +111,77 @@ class Rest_API
 		}
 	}
 
+	public static function get_specialists(\WP_REST_Request $request)
+	{
+
+		$specialists_id = get_term_by('name', \VCUL\Directory\Post_Type\taxonomy_slug_specialists());
+		error_log(print_r($specialists_id, true));
+
+		$specialists_query_args = array(
+			'posts_per_page' => -1,
+			'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
+			'tax_query' => array(
+				array(
+					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_specialists(),
+					'field' => 'term_id',
+					'terms' => $specialists_id->term_id,
+				)
+			)
+		);
+
+		$specialists_query = new \WP_Query($specialists_query_args);
+		$specialists_list = array();
+
+		try {
+			while ($specialists_query->have_posts()) {
+
+				$specialists_query->the_post();
+
+				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
+				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
+				$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
+				$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
+				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
+				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
+				$email = get_post_meta( get_the_ID(), 'directory_email', true);
+				$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
+				$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
+				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+
+				if ($headshot == false) {
+					$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+				}
+
+				$specialist = array(
+					'id' => get_the_ID(),
+					'slug' => get_post_field('post_name', get_post()),
+					'name' => get_the_title(),
+					'permalink' => get_the_permalink(),
+					'position' => esc_attr($directory_title),
+					'expertise' => $expertise,
+					'department' => $department,
+					'headshot' => $headshot,
+					'rank' => $faculty_rank,
+					'phone' => $phone,
+					'email' => $email,
+					'location' => $directory_address,
+					'protitle' => $protitle
+				);
+
+				$specialists_list[] = $specialist;
+			}
+			wp_reset_postdata();
+		} catch (Exception $e) {
+			return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+		}
+
+		return new \WP_REST_Response(
+			$specialists_list,
+			200
+		);
+	}
+
 	public static function get_department(\WP_REST_Request $request)
 	{
 		$params = $request->get_query_params();
@@ -402,6 +473,18 @@ class Rest_API
 			array(
 				'methods'             => 'GET',
 				'callback'            => array(__CLASS__, 'get_department'),
+				'permission_callback' => '__return_true'
+			)
+		);
+
+		// /wp-json/vcul-directory/v1/get-department?dept=DEPTNAME
+		// this gives you all members of a department via ?dept param
+		register_rest_route(
+			'vcul-directory/v1',
+			'get-specialists',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array(__CLASS__, 'get_specialists'),
 				'permission_callback' => '__return_true'
 			)
 		);
