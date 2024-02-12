@@ -68,17 +68,17 @@ class Rest_API
 					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-					$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
-					$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
-					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
-					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
-					$email = get_post_meta( get_the_ID(), 'directory_email', true);
-					$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
-					$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
-					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
+					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
+					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+					$email = get_post_meta(get_the_ID(), 'directory_email', true);
+					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
+					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
+					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 
 					if ($headshot == false) {
-						$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 					}
 
 					$expert = array(
@@ -113,68 +113,68 @@ class Rest_API
 
 	public static function get_specialists(\WP_REST_Request $request)
 	{
-
-		$specialists_id = get_term_by('name', \VCUL\Directory\Post_Type\taxonomy_slug_specialists());
-		error_log(print_r($specialists_id, true));
-
-		$specialists_query_args = array(
-			'posts_per_page' => -1,
-			'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
-			'tax_query' => array(
-				array(
-					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_specialists(),
-					'field' => 'term_id',
-					'terms' => $specialists_id->term_id,
-				)
-			)
-		);
-
-		$specialists_query = new \WP_Query($specialists_query_args);
+		$specialists_terms = get_terms(\VCUL\Directory\Post_Type\taxonomy_slug_specialists());
 		$specialists_list = array();
 
-		try {
-			while ($specialists_query->have_posts()) {
+		foreach ($specialists_terms as $specialists_term) {
+			$specialists_query_args = array(
+				'posts_per_page' => -1,
+				'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
+				'tax_query' => array(
+					array(
+						'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_specialists(),
+						'field' => 'term_id',
+						'terms' => $specialists_term->term_id,
+					)
+				)
+			);
+			$specialists_query = new \WP_Query($specialists_query_args);
 
-				$specialists_query->the_post();
+			try {
+				while ($specialists_query->have_posts()) {
 
-				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
-				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
-				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-				$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
-				$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
-				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
-				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
-				$email = get_post_meta( get_the_ID(), 'directory_email', true);
-				$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
-				$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
-				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+					$specialists_query->the_post();
 
-				if ($headshot == false) {
-					$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
+					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
+					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
+					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
+					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+					$email = get_post_meta(get_the_ID(), 'directory_email', true);
+					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
+					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
+					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+
+					if ($headshot == false) {
+						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+					}
+
+					$specialist = array(
+						'id' => get_the_ID(),
+						'slug' => get_post_field('post_name', get_post()),
+						'name' => get_the_title(),
+						'permalink' => get_the_permalink(),
+						'position' => esc_attr($directory_title),
+						'expertise' => $expertise,
+						'department' => $department,
+						'headshot' => $headshot,
+						'rank' => $faculty_rank,
+						'phone' => $phone,
+						'email' => $email,
+						'location' => $directory_address,
+						'protitle' => $protitle
+					);
+
+					$specialists_list[] = $specialist;
 				}
-
-				$specialist = array(
-					'id' => get_the_ID(),
-					'slug' => get_post_field('post_name', get_post()),
-					'name' => get_the_title(),
-					'permalink' => get_the_permalink(),
-					'position' => esc_attr($directory_title),
-					'expertise' => $expertise,
-					'department' => $department,
-					'headshot' => $headshot,
-					'rank' => $faculty_rank,
-					'phone' => $phone,
-					'email' => $email,
-					'location' => $directory_address,
-					'protitle' => $protitle
-				);
-
-				$specialists_list[] = $specialist;
+				wp_reset_postdata();
+			} catch (Exception $e) {
+				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
 			}
-			wp_reset_postdata();
-		} catch (Exception $e) {
-			return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
 		}
+
 
 		return new \WP_REST_Response(
 			$specialists_list,
@@ -242,17 +242,17 @@ class Rest_API
 					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-					$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
-					$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
-					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
-					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
-					$email = get_post_meta( get_the_ID(), 'directory_email', true);
-					$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
-					$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
-					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
+					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
+					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+					$email = get_post_meta(get_the_ID(), 'directory_email', true);
+					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
+					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
+					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 
 					if ($headshot == false) {
-						$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 					}
 
 					$dept_entry = array(
@@ -288,23 +288,22 @@ class Rest_API
 	public static function get_settings(\WP_REST_Request $request)
 	{
 		$params = $request->get_query_params();
-		$org_chart = get_option( 'directory_settings' );
-		
+		$org_chart = get_option('directory_settings');
+
 		$settings_array = array();
 
-			try {
-				$settings_array = [
-					"org_chart" => $org_chart['org_chart'],
-				];
+		try {
+			$settings_array = [
+				"org_chart" => $org_chart['org_chart'],
+			];
 
-				return new \WP_REST_Response(
-					$settings_array,
-					200
-				);
-			} catch (Exception $e) {
-				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
-			}
-
+			return new \WP_REST_Response(
+				$settings_array,
+				200
+			);
+		} catch (Exception $e) {
+			return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
+		}
 	}
 
 	public static function get_directory(\WP_REST_Request $request)
@@ -346,42 +345,42 @@ class Rest_API
 				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
-				$directory_cv = get_post_meta( get_the_ID(), 'vcul-directory-cv', true);
+				$directory_cv = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
 				$directory_cv = $directory_cv['url'] ?? null;
-				$faculty_rank = get_post_meta( get_the_ID(), 'directory_rank', true);
-				$libcal_link = get_post_meta( get_the_ID(), 'directory_libcal', true);
-				$pronouns = get_post_meta( get_the_ID(), 'directory_pronouns', true);
-				$internal_phone = get_post_meta( get_the_ID(), 'internal_phone_only', true);
-				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta( get_the_ID(), 'directory_phone', true) : null;
-				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta( get_the_ID(), 'directory_address', true) : null;
-				$email = get_post_meta( get_the_ID(), 'directory_email', true);
-				$guides = get_post_meta( get_the_ID(), 'directory_guides', true);
-				$protitle = get_post_meta( get_the_ID(), 'directory_pro_title', true);
-				$headshot_privacy = get_post_meta( get_the_ID(), 'internal_pic_only', true);
-				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
-				
+				$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
+				$libcal_link = get_post_meta(get_the_ID(), 'directory_libcal', true);
+				$pronouns = get_post_meta(get_the_ID(), 'directory_pronouns', true);
+				$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
+				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+				$email = get_post_meta(get_the_ID(), 'directory_email', true);
+				$guides = get_post_meta(get_the_ID(), 'directory_guides', true);
+				$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
+				$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
+				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+
 				if ($headshot == false) {
-					$headshot = plugins_url('img/anon_headshot.jpg', dirname( __FILE__ ) );
+					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 				}
 
 				if ($guides) {
 					try {
-						$response = wp_remote_get( $guides, array(
+						$response = wp_remote_get($guides, array(
 							'headers' => array(
 								'Accept' => 'text/html',
 							)
-						) );
-						if ( ( !is_wp_error($response)) && (200 === wp_remote_retrieve_response_code( $response ) ) ) {
+						));
+						if ((!is_wp_error($response)) && (200 === wp_remote_retrieve_response_code($response))) {
 							$guides = $response['body'];
 						} else {
 							$guides = null;
 						}
-					} catch( \Exception $ex ) {
+					} catch (\Exception $ex) {
 						$guides = null;
 						error_log(print_r($ex, true));
 					}
 				}
-				
+
 				$directory_entry = array(
 					'id' => get_the_ID(),
 					'slug' => get_post_field('post_name', get_post()),
@@ -390,7 +389,7 @@ class Rest_API
 					'position' => esc_attr($directory_title),
 					'expertise' => $expertise,
 					'department' => $department,
-					'bio' => apply_filters( 'the_content', get_the_content() ),
+					'bio' => apply_filters('the_content', get_the_content()),
 					'headshot' => $headshot,
 					'cv' => $directory_cv,
 					'rank' => $faculty_rank,
@@ -494,7 +493,6 @@ class Rest_API
 	{
 		add_action('rest_api_init', __CLASS__ . '::register_endpoints');
 	}
-
 }
 
 Rest_API::init();
