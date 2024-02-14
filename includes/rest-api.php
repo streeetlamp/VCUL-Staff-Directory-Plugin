@@ -335,7 +335,7 @@ class Rest_API
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 				}
 
-				if ($guides) {
+				if ($guides && $staff) {
 					try {
 						$response = wp_remote_get($guides, array(
 							'headers' => array(
