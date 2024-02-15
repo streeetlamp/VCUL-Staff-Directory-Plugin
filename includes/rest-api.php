@@ -158,6 +158,7 @@ class Rest_API
 	{
 		$params = $request->get_query_params();
 		$is_filtered = $params['dept'] ?? false;
+		add_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
 
 		$dept_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
 
@@ -169,7 +170,7 @@ class Rest_API
 				array(
 					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
 					'hide_empty' => 1,
-					'orderby' => 'term_id',
+					'orderby' => 'name',
 				)
 			);
 
