@@ -21,6 +21,8 @@ class Rest_API
 				'fields'   => 'id=>slug',
 			));
 
+			add_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
+
 			$experts_query_args = array(
 				'posts_per_page' => -1,
 				'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
