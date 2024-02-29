@@ -81,7 +81,7 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	function wprc_hide_clear_cache_button( $show ) {
     return true;
 	}
-	add_filter('wp_rest_cache/display_clear_cache_button', 'VCUL\Directory\wprc_hide_clear_cache_button', 1, 1);
+	add_filter('wp_rest_cache/display_clear_cache_button', 'VCUL\Directory\wprc_hide_clear_cache_button', 10, 1);
 
 	/**
 	 * Starts things up.
