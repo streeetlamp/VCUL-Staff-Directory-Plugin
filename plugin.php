@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: VCUL Staff Directory
-Version: 0.0.51
+Version: 0.0.52
 Description: A WordPress plugin for managing a staff directory.
 Author: VCUL Web Team
 Author URI: https://library.vcu.edu
@@ -60,6 +60,28 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 		}
 		return false;
 	}
+
+	/**
+	 * Register the /wp-json/vcul-directory/v1/get-directory endpoint so it will be cached.
+	 */
+	function wprc_add_directory_endpoint($allowed_endpoints)
+	{
+		if (
+			!isset($allowed_endpoints['vcul-directory/v1'])
+		) {
+			$allowed_endpoints['vcul-directory/v1'][] = 'get-directory';
+			$allowed_endpoints['vcul-directory/v1'][] = 'get-experts';
+			$allowed_endpoints['vcul-directory/v1'][] = 'get-department';
+			$allowed_endpoints['vcul-directory/v1'][] = 'get-settings';
+		}
+		return $allowed_endpoints;
+	}
+	add_filter('wp_rest_cache/allowed_endpoints', 'VCUL\Directory\wprc_add_directory_endpoint', 10, 1);
+
+	function wprc_hide_clear_cache_button( $show ) {
+    return true;
+	}
+	add_filter('wp_rest_cache/display_clear_cache_button', 'VCUL\Directory\wprc_hide_clear_cache_button', 1, 1);
 
 	/**
 	 * Starts things up.
