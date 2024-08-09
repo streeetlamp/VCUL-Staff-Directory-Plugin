@@ -309,6 +309,10 @@ function admin_enqueue_scripts($hook)
 	}
 
 	wp_enqueue_style('vcul-directory-admin', plugins_url('css/directory-admin.css', dirname(__FILE__)), array(), \VCUL\Directory\plugin_version());
+
+
+		wp_enqueue_media();
+		wp_enqueue_script( 'vcul-directory', plugins_url( 'js/directory-media.js', dirname( __FILE__ ) ), array( 'jquery' ), \VCUL\Directory\plugin_version(), true );
 }
 
 
@@ -349,17 +353,48 @@ function add_meta_boxes()
 
 function display_directory_cv_meta_box()
 {
+		// Variables
+		global $post;
+		$saved = get_post_meta( $post->ID, 'vcul-directory-cv', true );
+
+		?>
+
+			<fieldset>
+
+				<div>
+					<?php 
+						/**
+						 * The label for the media field
+						 */ 
+					?>
+					<label for="myplugin_media"><?php _e( 'Field Label', 'events' )?></label><br>
+
+					<?php 
+						/**
+						 * The actual field that will hold the URL for our file
+						 */ 
+					?>
+					<input type="url" class="large-text" name="vcul-directory-cv" id="myplugin_media" value="<?php echo esc_attr( $saved['url'] ); ?>"><br>
+
+					<?php 
+						/**
+						 * The button that opens our media uploader
+						 * The `data-media-uploader-target` value should match the ID/unique selector of your field.
+						 * We'll use this value to dynamically inject the file URL of our uploaded media asset into your field once successful (in the myplugin-media.js file)
+						 */ 
+					?>
+					<button type="button" class="button" id="events_video_upload_btn" data-media-uploader-target="#myplugin_media"><?php _e( 'Upload Media', 'myplugin' )?></button>
+				</div>
+
+			</fieldset>
+
+		<?php
+
+		// Security field
 	wp_nonce_field('save-vcul-directory-meta', '_vcul_directory_meta_nonce');
-	$html = '<p class="description">';
-	$html .= 'Upload your CV PDF';
-	$html .= '</p>';
-	$html .= '<input type="file" id="vcul-directory-cv" name="vcul-directory-cv" value="" size="25">';
-	$filearray = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
-	if (isset($filearray['url'])) {
-		$html .= '<div style="margin-top:5px;">' . $filearray['url'] . '</div>';
-	}
-	echo $html;
 }
+
+
 
 /**
  * Displays the metabox used to capture Directory information.
@@ -528,6 +563,15 @@ function wp_enqueue_scripts()
 {
 	if (is_singular(post_type_slug())) {
 		wp_enqueue_style('vcul-directory', plugins_url('css/directory.css', dirname(__FILE__)), \VCUL\Directory\plugin_version());
+			// // Registers and enqueues the required javascript.
+			// wp_register_script( 'meta-box-image', plugins_url( 'js/myplugin-media.js' , dirname(__FILE__)), array( 'jquery' ) );
+			// wp_localize_script( 'meta-box-image', 'meta_image',
+			// 	array(
+			// 		'title' => __( 'Choose or Upload Media', 'events' ),
+			// 		'button' => __( 'Use this media', 'events' ),
+			// 	)
+			// );
+			// wp_enqueue_script( 'meta-box-image' );
 	}
 }
 
