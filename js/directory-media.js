@@ -1,48 +1,76 @@
-/**
- * Load media uploader on pages with our custom metabox
- */
- jQuery(document).ready(function($){
+jQuery(function($){
 
-	'use strict';
+  // Set all variables to be used in scope
+  var frame,
+      metaBox = $('#vcul-directory-cv.postbox'), // Your meta box id here
+      addImgLink = metaBox.find('.upload-custom-img'),
+      delImgLink = metaBox.find( '.delete-custom-img'),
+      imgContainer = metaBox.find( '.custom-img-container'),
+      imgIdInput = metaBox.find( '.vcul-directory-cv' );
+  
+  // ADD IMAGE LINK
+  addImgLink.on( 'click', function( event ){
+    
+    event.preventDefault();
+    
+    // If the media frame already exists, reopen it.
+    if ( frame ) {
+      frame.open();
+      return;
+    }
+    
+    // Create a new media frame
+    frame = wp.media({
+      title: 'Select or Upload Media Of Your Chosen Persuasion',
+      button: {
+        text: 'Use this media'
+      },
+      multiple: false  // Set to true to allow multiple files to be selected
+    });
 
-	// Instantiates the variable that holds the media library frame.
-	var metaImageFrame;
-
-	// Runs when the media button is clicked.
-	$( 'body' ).click(function(e) {
-
-		// Get the btn
-		var btn = e.target;
-		
-		// Check if it's the upload button
-		if ( !btn || !$( btn ).attr( 'data-media-uploader-target' ) ) return;
-
-		// Get the field target
-		var field = $( btn ).data( 'media-uploader-target' );
-		
-
-		// Prevents the default action from occuring.
-		e.preventDefault();
-		// Sets up the media library frame
-		metaImageFrame = wp.media.frames.metaImageFrame = wp.media({
-			button: { text:  'Use this file' },
-		});
-
-		// Runs when an image is selected.
-		metaImageFrame.on('select', function() {
-
-			// Grabs the attachment selection and creates a JSON representation of the model.
-			var media_attachment = metaImageFrame.state().get('selection').first().toJSON();
+    
+    // When an image is selected in the media frame...
+    frame.on( 'select', function() {
 			
+      
+      // Get media attachment details from the frame state
+      var attachment = frame.state().get('selection').first().toJSON();
 
-			// Sends the attachment URL to our custom image input field.
-			$( field ).val(media_attachment.url);
+      // Send the attachment URL to our custom image input field.
+      imgContainer.append( '<img src="'+attachment.url+'" alt="" style="max-width:100%;"/>' );
 
-		});
+      // Send the attachment id to our hidden input
+      imgIdInput.val( attachment.url );
 
-		// Opens the media library frame.
-		metaImageFrame.open();
+      // Hide the add image link
+      addImgLink.addClass( 'hidden' );
 
-	});
+      // Unhide the remove image link
+      delImgLink.removeClass( 'hidden' );
+    });
+
+    // Finally, open the modal on click
+    frame.open();
+  });
+  
+  
+  // DELETE IMAGE LINK
+  delImgLink.on( 'click', function( event ){
+
+    event.preventDefault();
+
+    // Clear out the preview image
+    imgContainer.html( '' );
+
+    // Un-hide the add image link
+    addImgLink.removeClass( 'hidden' );
+
+    // Hide the delete image link
+    delImgLink.addClass( 'hidden' );
+
+    // Delete the image id from the hidden input
+    imgIdInput.val( '' );
+
+  });
 
 });

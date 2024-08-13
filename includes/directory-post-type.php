@@ -82,6 +82,10 @@ function post_meta_keys()
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
+		'vcul-directory-cv' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'esc_url_raw',
+		),
 		'directory_pronouns' => array(
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
@@ -353,45 +357,44 @@ function add_meta_boxes()
 
 function display_directory_cv_meta_box()
 {
-		// Variables
-		global $post;
-		$saved = get_post_meta( $post->ID, 'vcul-directory-cv', true );
+	global $post;
 
-		?>
+// Get WordPress' media upload URL
+$upload_link = esc_url( get_upload_iframe_src( 'image', $post->ID ) );
 
-			<fieldset>
+// See if there's a media id already saved as post meta
+$your_img_id = get_post_meta( $post->ID, 'vcul-directory-cv', true );
 
-				<div>
-					<?php 
-						/**
-						 * The label for the media field
-						 */ 
-					?>
-					<label for="myplugin_media"><?php _e( 'Field Label', 'events' )?></label><br>
 
-					<?php 
-						/**
-						 * The actual field that will hold the URL for our file
-						 */ 
-					?>
-					<input type="url" class="large-text" name="vcul-directory-cv" id="myplugin_media" value="<?php echo esc_attr( $saved['url'] ); ?>"><br>
+// Get the image src
+$your_img_src = wp_get_attachment_image_src( $your_img_id, 'full' );
+error_log($your_img_src);
 
-					<?php 
-						/**
-						 * The button that opens our media uploader
-						 * The `data-media-uploader-target` value should match the ID/unique selector of your field.
-						 * We'll use this value to dynamically inject the file URL of our uploaded media asset into your field once successful (in the myplugin-media.js file)
-						 */ 
-					?>
-					<button type="button" class="button" id="events_video_upload_btn" data-media-uploader-target="#myplugin_media"><?php _e( 'Upload Media', 'myplugin' )?></button>
-				</div>
+// For convenience, see if the array is valid
+$you_have_img = is_array( $your_img_src );
+?>
 
-			</fieldset>
+<!-- Your image container, which can be manipulated with js -->
+<div class="custom-img-container">
+    <?php if ( $you_have_img ) : ?>
+        <img src="<?php echo $your_img_src[0] ?>" alt="" style="max-width:100%;" />
+    <?php endif; ?>
+</div>
 
-		<?php
+<!-- Your add & remove image links -->
+<p class="hide-if-no-js">
+    <a class="upload-custom-img <?php if ( $you_have_img  ) { echo 'hidden'; } ?>" 
+       href="<?php echo $upload_link ?>">
+        <?php _e('Set custom image') ?>
+    </a>
+    <a class="delete-custom-img <?php if ( ! $you_have_img  ) { echo 'hidden'; } ?>" 
+      href="#">
+        <?php _e('Remove this image') ?>
+    </a>
+</p>
 
-		// Security field
-	wp_nonce_field('save-vcul-directory-meta', '_vcul_directory_meta_nonce');
+<!-- A hidden input to set and post the chosen image id -->
+<input class="vcul-directory-cv" name="vcul-directory-cv" type="hidden" value="<?php echo esc_attr( $your_img_id); ?>" /> <?php
 }
 
 
@@ -520,15 +523,16 @@ function save_post($post_id, $post)
 	}
 
 	$key = get_registered_meta_keys('post');
-
+	
 	foreach (post_meta_keys() as $key => $args) {
+		error_log(print_r($key, true));
 		if (isset($_POST[$key]) && '' !== $_POST[$key] && isset($args['sanitize_callback'])) {
 			update_post_meta($post_id, $key, $_POST[$key]);
 		} else {
 			delete_post_meta($post_id, $key);
 		}
 	}
-
+	error_log(print_r($_FILES, true));
 	if (!empty($_FILES['vcul-directory-cv']['name'])) {
 		$supported_types = array('application/pdf');
 		$arr_file_type = wp_check_filetype(basename($_FILES['vcul-directory-cv']['name']));
