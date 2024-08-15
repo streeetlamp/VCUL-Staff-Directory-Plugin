@@ -14,6 +14,11 @@ class Rest_API
 		$expert_check = term_exists($is_filtered,  \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
 		$expert_exists = $expert_check !== 0 && $expert_check !== null ? true : false;
 
+		$fetchSite = null;
+		if (isset($_SERVER['HTTP_SEC_FETCH_SITE'])) {
+				$fetchSite = $_SERVER['HTTP_SEC_FETCH_SITE'];
+		}
+
 		if (!$expert_exists) {
 
 			$experts = get_terms( array(
@@ -47,12 +52,12 @@ class Rest_API
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
 					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
-					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
-					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+					$phone = \VCUL\Directory\privacy_check($fetchSite, $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+					$directory_address = \VCUL\Directory\privacy_check($fetchSite, true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
 					$email = get_post_meta(get_the_ID(), 'directory_email', true);
 					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
-					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+					$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 
 					if ($headshot == false) {
 						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -115,13 +120,13 @@ class Rest_API
 				$libcal_link = get_post_meta(get_the_ID(), 'directory_libcal', true);
 				$pronouns = get_post_meta(get_the_ID(), 'directory_pronouns', true);
 				$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
-				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
-				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+				$phone = \VCUL\Directory\privacy_check($fetchSite, $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+				$directory_address = \VCUL\Directory\privacy_check($fetchSite, true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
 				$email = get_post_meta(get_the_ID(), 'directory_email', true);
 				$guides = get_post_meta(get_the_ID(), 'directory_guides', true);
 				$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 				$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
-				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+				$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 
 				if ($headshot == false) {
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -161,6 +166,11 @@ class Rest_API
 		$params = $request->get_query_params();
 		$is_filtered = $params['dept'] ?? false;
 		add_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
+
+		$fetchSite = null;
+		if (isset($_SERVER['HTTP_SEC_FETCH_SITE'])) {
+				$fetchSite = $_SERVER['HTTP_SEC_FETCH_SITE'];
+		}
 
 		$dept_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
 
@@ -219,12 +229,12 @@ class Rest_API
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
 					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
-					$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
-					$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+					$phone = \VCUL\Directory\privacy_check($fetchSite, $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+					$directory_address = \VCUL\Directory\privacy_check($fetchSite, true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
 					$email = get_post_meta(get_the_ID(), 'directory_email', true);
 					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
-					$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+					$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 
 					if ($headshot == false) {
 						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -285,7 +295,6 @@ class Rest_API
 	{
 
 		$params = $request->get_query_params();
-		// error_log(\VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE']));
 
 		$posts_per_page = $params['postsPerPage'] ?? -1;
 		$orderby = $params['orderBy'] ?? 'title';
@@ -293,6 +302,11 @@ class Rest_API
 		$page = $params['page'] ?? 1;
 		$staff = $params['staff'] ?? '';
 		add_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
+
+		$fetchSite = null;
+		if (isset($_SERVER['HTTP_SEC_FETCH_SITE'])) {
+				$fetchSite = $_SERVER['HTTP_SEC_FETCH_SITE'];
+		}
 
 
 		// $data = array( $params, $orderby, $order );
@@ -326,13 +340,13 @@ class Rest_API
 				$libcal_link = get_post_meta(get_the_ID(), 'directory_libcal', true);
 				$pronouns = get_post_meta(get_the_ID(), 'directory_pronouns', true);
 				$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
-				$phone = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
-				$directory_address = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
+				$phone = \VCUL\Directory\privacy_check($fetchSite, $internal_phone) ? get_post_meta(get_the_ID(), 'directory_phone', true) : null;
+				$directory_address = \VCUL\Directory\privacy_check($fetchSite, true) ? get_post_meta(get_the_ID(), 'directory_address', true) : null;
 				$email = get_post_meta(get_the_ID(), 'directory_email', true);
 				$guides = get_post_meta(get_the_ID(), 'directory_guides', true);
 				$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 				$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
-				$headshot = \VCUL\Directory\privacy_check($_SERVER['HTTP_SEC_FETCH_SITE'], $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+				$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 
 				if ($headshot == false) {
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: VCUL Staff Directory
-Version: 1.0.2
+Version: 1.0.3
 Description: A WordPress plugin for managing a staff directory.
 Author: VCUL Web Team
 Author URI: https://library.vcu.edu
@@ -51,7 +51,7 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	}
 
 	/* 
-	* Checking if origin is same AND if the field is marked private or not. If origin 	is the same (meaning the request is coming from the same server) and the field is NOT marked private then we will display private fields.
+	* Checking if origin is same AND if the field is marked private or not. If origin is the same (meaning the request is coming from the same server) and the field is NOT marked private then we will display private fields.
 	*/
 	function privacy_check ($origin, $field = false) 
 	{
