@@ -358,43 +358,37 @@ function add_meta_boxes()
 function display_directory_cv_meta_box()
 {
 	global $post;
+	wp_nonce_field('save-vcul-directory-meta', '_vcul_directory_meta_nonce');
 
-// Get WordPress' media upload URL
-$upload_link = esc_url( get_upload_iframe_src( 'image', $post->ID ) );
+	// Get WordPress' media upload URL
+	$upload_link = esc_url( get_upload_iframe_src( 'image', $post->ID ) );
 
-// See if there's a media id already saved as post meta
-$your_img_id = get_post_meta( $post->ID, 'vcul-directory-cv', true );
-
-
-// Get the image src
-$your_img_src = wp_get_attachment_image_src( $your_img_id, 'full' );
-error_log($your_img_src);
-
-// For convenience, see if the array is valid
-$you_have_img = is_array( $your_img_src );
+	// See if there's a media id already saved as post meta
+	$upload_url = get_post_meta( $post->ID, 'vcul-directory-cv', true );
 ?>
 
 <!-- Your image container, which can be manipulated with js -->
 <div class="custom-img-container">
-    <?php if ( $you_have_img ) : ?>
-        <img src="<?php echo $your_img_src[0] ?>" alt="" style="max-width:100%;" />
+    <?php if ( $upload_url ) : ?>
+        <img src="<?php echo $upload_url ?>" alt="" style="max-width:100%;" />
+				<input class="widefat" type="url" value="<?php echo $upload_url ?>" readonly>
     <?php endif; ?>
 </div>
 
 <!-- Your add & remove image links -->
 <p class="hide-if-no-js">
-    <a class="upload-custom-img <?php if ( $you_have_img  ) { echo 'hidden'; } ?>" 
+    <a class="upload-custom-img <?php if ( $upload_url  ) { echo 'hidden'; } ?>" 
        href="<?php echo $upload_link ?>">
         <?php _e('Set custom image') ?>
     </a>
-    <a class="delete-custom-img <?php if ( ! $you_have_img  ) { echo 'hidden'; } ?>" 
+    <a class="delete-custom-img <?php if ( ! $upload_url  ) { echo 'hidden'; } ?>" 
       href="#">
         <?php _e('Remove this image') ?>
     </a>
 </p>
 
 <!-- A hidden input to set and post the chosen image id -->
-<input class="vcul-directory-cv" name="vcul-directory-cv" type="hidden" value="<?php echo esc_attr( $your_img_id); ?>" /> <?php
+<input class="vcul-directory-cv" name="vcul-directory-cv" type="hidden" value="<?php echo esc_attr( $upload_url ); ?>" /> <?php
 }
 
 
@@ -525,28 +519,10 @@ function save_post($post_id, $post)
 	$key = get_registered_meta_keys('post');
 	
 	foreach (post_meta_keys() as $key => $args) {
-		error_log(print_r($key, true));
 		if (isset($_POST[$key]) && '' !== $_POST[$key] && isset($args['sanitize_callback'])) {
 			update_post_meta($post_id, $key, $_POST[$key]);
 		} else {
 			delete_post_meta($post_id, $key);
-		}
-	}
-	error_log(print_r($_FILES, true));
-	if (!empty($_FILES['vcul-directory-cv']['name'])) {
-		$supported_types = array('application/pdf');
-		$arr_file_type = wp_check_filetype(basename($_FILES['vcul-directory-cv']['name']));
-		$uploaded_type = $arr_file_type['type'];
-		if (in_array($uploaded_type, $supported_types)) {
-			$upload = wp_upload_bits($_FILES['vcul-directory-cv']['name'], null, file_get_contents($_FILES['vcul-directory-cv']['tmp_name']));
-			if (isset($upload['error']) && $upload['error'] != 0) {
-				wp_die('There was an error uploading your file. The error is: ' . $upload['error']);
-			} else {
-				add_post_meta($post_id, 'vcul-directory-cv', $upload);
-				update_post_meta($post_id, 'vcul-directory-cv', $upload);
-			}
-		} else {
-			wp_die("The file type that you've uploaded is not a PDF.");
 		}
 	}
 }
@@ -567,15 +543,6 @@ function wp_enqueue_scripts()
 {
 	if (is_singular(post_type_slug())) {
 		wp_enqueue_style('vcul-directory', plugins_url('css/directory.css', dirname(__FILE__)), \VCUL\Directory\plugin_version());
-			// // Registers and enqueues the required javascript.
-			// wp_register_script( 'meta-box-image', plugins_url( 'js/myplugin-media.js' , dirname(__FILE__)), array( 'jquery' ) );
-			// wp_localize_script( 'meta-box-image', 'meta_image',
-			// 	array(
-			// 		'title' => __( 'Choose or Upload Media', 'events' ),
-			// 		'button' => __( 'Use this media', 'events' ),
-			// 	)
-			// );
-			// wp_enqueue_script( 'meta-box-image' );
 	}
 }
 
