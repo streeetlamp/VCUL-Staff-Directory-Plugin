@@ -368,10 +368,10 @@ function display_directory_cv_meta_box()
 ?>
 
 <!-- Your image container, which can be manipulated with js -->
-<div class="custom-img-container">
+<div class="custom-img-container" style="padding-top: 10px;">
     <?php if ( $upload_url ) : ?>
-        <img src="<?php echo $upload_url ?>" alt="" style="max-width:100%;" />
-				<input class="widefat" type="url" value="<?php echo $upload_url ?>" readonly>
+				<span style="font-size: 36px;line-height: 28px;" class="dashicons dashicons-pdf"></span>
+				<input class="widefat" type="url" style="max-width:85%;position:relative;left:40px;" value="<?php echo $upload_url ?>" readonly>
     <?php endif; ?>
 </div>
 
@@ -379,11 +379,11 @@ function display_directory_cv_meta_box()
 <p class="hide-if-no-js">
     <a class="upload-custom-img <?php if ( $upload_url  ) { echo 'hidden'; } ?>" 
        href="<?php echo $upload_link ?>">
-        <?php _e('Set custom image') ?>
+        <?php _e('Add your CV PDF') ?>
     </a>
     <a class="delete-custom-img <?php if ( ! $upload_url  ) { echo 'hidden'; } ?>" 
       href="#">
-        <?php _e('Remove this image') ?>
+        <?php _e('Remove this CV') ?>
     </a>
 </p>
 

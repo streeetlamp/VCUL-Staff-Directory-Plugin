@@ -7,12 +7,6 @@ jQuery(function($){
       delImgLink = metaBox.find( '.delete-custom-img'),
       imgContainer = metaBox.find( '.custom-img-container'),
       imgIdInput = metaBox.find( '.vcul-directory-cv' );
-
-      // console.log(addImgLink);
-      // console.log(delImgLink);
-      // console.log(imgContainer);
-      // console.log(imgIdInput);
-      // console.log(metaBox);
   
   // ADD IMAGE LINK
   addImgLink.on( 'click', function( event ){
@@ -43,8 +37,8 @@ jQuery(function($){
       var attachment = frame.state().get('selection').first().toJSON();
 
       // Send the attachment URL to our custom image input field.
-      imgContainer.append( '<img src="'+attachment.url+'" alt="" style="max-width:100%;"/>' );
-      imgContainer.append( '<input value="'+attachment.url+'" class="widefat" readonly alt="" style="max-width:100%;"/>' );
+      imgContainer.append( '<span style="line-height: 28px;font-size: 36px;" class="dashicons dashicons-pdf"></span>' );
+      imgContainer.append( '<input value="'+attachment.url+'" class="widefat" type="url" readonly style="max-width:85%;position:relative;left:40px;"/>' );
 
       // Send the attachment id to our hidden input
       imgIdInput.val( attachment.url );
