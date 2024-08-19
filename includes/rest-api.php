@@ -115,7 +115,6 @@ class Rest_API
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 				$directory_cv = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
-				$directory_cv = $directory_cv['url'] ?? null;
 				$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
 				$libcal_link = get_post_meta(get_the_ID(), 'directory_libcal', true);
 				$pronouns = get_post_meta(get_the_ID(), 'directory_pronouns', true);
@@ -335,7 +334,6 @@ class Rest_API
 				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
 				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 				$directory_cv = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
-				$directory_cv = $directory_cv['url'] ?? null;
 				$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
 				$libcal_link = get_post_meta(get_the_ID(), 'directory_libcal', true);
 				$pronouns = get_post_meta(get_the_ID(), 'directory_pronouns', true);

@@ -82,6 +82,10 @@ function post_meta_keys()
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
+		'vcul-directory-cv' => array(
+			'type' => 'string',
+			'sanitize_callback' => 'esc_url_raw',
+		),
 		'directory_pronouns' => array(
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
@@ -309,6 +313,10 @@ function admin_enqueue_scripts($hook)
 	}
 
 	wp_enqueue_style('vcul-directory-admin', plugins_url('css/directory-admin.css', dirname(__FILE__)), array(), \VCUL\Directory\plugin_version());
+
+
+		wp_enqueue_media();
+		wp_enqueue_script( 'vcul-directory', plugins_url( 'js/directory-media.js', dirname( __FILE__ ) ), array( 'jquery' ), \VCUL\Directory\plugin_version(), true );
 }
 
 
@@ -349,17 +357,41 @@ function add_meta_boxes()
 
 function display_directory_cv_meta_box()
 {
+	global $post;
 	wp_nonce_field('save-vcul-directory-meta', '_vcul_directory_meta_nonce');
-	$html = '<p class="description">';
-	$html .= 'Upload your CV PDF';
-	$html .= '</p>';
-	$html .= '<input type="file" id="vcul-directory-cv" name="vcul-directory-cv" value="" size="25">';
-	$filearray = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
-	if (isset($filearray['url'])) {
-		$html .= '<div style="margin-top:5px;">' . $filearray['url'] . '</div>';
-	}
-	echo $html;
+
+	// Get WordPress' media upload URL
+	$upload_link = esc_url( get_upload_iframe_src( 'image', $post->ID ) );
+
+	// See if there's a media id already saved as post meta
+	$upload_url = get_post_meta( $post->ID, 'vcul-directory-cv', true );
+?>
+
+<!-- Your image container, which can be manipulated with js -->
+<div class="custom-img-container" style="padding-top: 10px;">
+    <?php if ( $upload_url ) : ?>
+				<span style="font-size: 36px;line-height: 28px;" class="dashicons dashicons-pdf"></span>
+				<input class="widefat" type="url" style="max-width:85%;position:relative;left:40px;" value="<?php echo $upload_url ?>" readonly>
+    <?php endif; ?>
+</div>
+
+<!-- Your add & remove image links -->
+<p class="hide-if-no-js">
+    <a class="upload-custom-img <?php if ( $upload_url  ) { echo 'hidden'; } ?>" 
+       href="<?php echo $upload_link ?>">
+        <?php _e('Add your CV PDF') ?>
+    </a>
+    <a class="delete-custom-img <?php if ( ! $upload_url  ) { echo 'hidden'; } ?>" 
+      href="#">
+        <?php _e('Remove this CV') ?>
+    </a>
+</p>
+
+<!-- A hidden input to set and post the chosen image id -->
+<input class="vcul-directory-cv" name="vcul-directory-cv" type="hidden" value="<?php echo esc_attr( $upload_url ); ?>" /> <?php
 }
+
+
 
 /**
  * Displays the metabox used to capture Directory information.
@@ -485,29 +517,12 @@ function save_post($post_id, $post)
 	}
 
 	$key = get_registered_meta_keys('post');
-
+	
 	foreach (post_meta_keys() as $key => $args) {
 		if (isset($_POST[$key]) && '' !== $_POST[$key] && isset($args['sanitize_callback'])) {
 			update_post_meta($post_id, $key, $_POST[$key]);
 		} else {
 			delete_post_meta($post_id, $key);
-		}
-	}
-
-	if (!empty($_FILES['vcul-directory-cv']['name'])) {
-		$supported_types = array('application/pdf');
-		$arr_file_type = wp_check_filetype(basename($_FILES['vcul-directory-cv']['name']));
-		$uploaded_type = $arr_file_type['type'];
-		if (in_array($uploaded_type, $supported_types)) {
-			$upload = wp_upload_bits($_FILES['vcul-directory-cv']['name'], null, file_get_contents($_FILES['vcul-directory-cv']['tmp_name']));
-			if (isset($upload['error']) && $upload['error'] != 0) {
-				wp_die('There was an error uploading your file. The error is: ' . $upload['error']);
-			} else {
-				add_post_meta($post_id, 'vcul-directory-cv', $upload);
-				update_post_meta($post_id, 'vcul-directory-cv', $upload);
-			}
-		} else {
-			wp_die("The file type that you've uploaded is not a PDF.");
 		}
 	}
 }
