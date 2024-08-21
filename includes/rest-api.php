@@ -2,6 +2,14 @@
 
 namespace VCUL\Plugin\Directory;
 
+function reverseName($name)
+{
+	$nameParts = explode('-', $name);
+	$reversedNameParts = array_reverse($nameParts);
+	$swappedName = implode('-', $reversedNameParts);
+	return $swappedName;
+}
+
 class Rest_API
 {
 	// Debug ?_envelope&_wpnonce=5xti%20DfaS%20Y1hC%20GUmQ%20lKLZ%20Fe53
@@ -345,6 +353,7 @@ class Rest_API
 				$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 				$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
 				$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+				$legacy_url = reverseName(get_post_field('post_name', get_post()));
 
 				if ($headshot == false) {
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -386,7 +395,8 @@ class Rest_API
 					'email' => $email,
 					'location' => $directory_address,
 					'guides' => $guides,
-					'protitle' => $protitle
+					'protitle' => $protitle,
+					'legacy_url' => $legacy_url
 				);
 
 				$the_directory[] = $directory_entry;
