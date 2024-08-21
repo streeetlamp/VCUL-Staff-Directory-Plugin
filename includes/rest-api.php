@@ -396,7 +396,7 @@ class Rest_API
 					'location' => $directory_address,
 					'guides' => $guides,
 					'protitle' => $protitle,
-					'legacy_url' => $legacy_url
+					'flipped_slug' => $legacy_url
 				);
 
 				$the_directory[] = $directory_entry;
