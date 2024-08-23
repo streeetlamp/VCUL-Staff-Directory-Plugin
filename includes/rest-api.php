@@ -66,6 +66,7 @@ class Rest_API
 					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
 					$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+					$legacy_url = reverseName(get_post_field('post_name', get_post()));
 
 					if ($headshot == false) {
 						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -85,6 +86,7 @@ class Rest_API
 						'location' => $directory_address,
 						'protitle' => $protitle,
 						'expertise' => $expertise,
+						'flipped_slug' => $legacy_url
 					);
 					$expertise_list[] = $expert;
 			}
@@ -134,6 +136,7 @@ class Rest_API
 				$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 				$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
 				$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+				$legacy_url = reverseName(get_post_field('post_name', get_post()));
 
 				if ($headshot == false) {
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -151,7 +154,8 @@ class Rest_API
 						'phone' => $phone,
 						'email' => $email,
 						'location' => $directory_address,
-						'protitle' => $protitle
+						'protitle' => $protitle,
+						'flipped_slug' => $legacy_url
 					);
 
 					$expert_list[] = $expert;
@@ -242,6 +246,7 @@ class Rest_API
 					$protitle = get_post_meta(get_the_ID(), 'directory_pro_title', true);
 					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
 					$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
+					$legacy_url = reverseName(get_post_field('post_name', get_post()));
 
 					if ($headshot == false) {
 						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -260,7 +265,8 @@ class Rest_API
 						'phone' => $phone,
 						'email' => $email,
 						'location' => $directory_address,
-						'protitle' => $protitle
+						'protitle' => $protitle,
+						'flipped_slug' => $legacy_url
 					);
 
 					$the_department[] = $dept_entry;
