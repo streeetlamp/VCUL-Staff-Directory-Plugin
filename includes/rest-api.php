@@ -100,7 +100,7 @@ class Rest_API
 			}
 		} else {
 
-			$expert_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
+			$expert_id = get_term_by('slug', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_expertise());
 
 			$expert_query_args = array(
 				'posts_per_page' => -1,
@@ -183,7 +183,7 @@ class Rest_API
 				$fetchSite = $_SERVER['HTTP_SEC_FETCH_SITE'];
 		}
 
-		$dept_id = get_term_by('name', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
+		$dept_id = get_term_by('slug', $is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
 
 		$dept_check = term_exists($is_filtered, \VCUL\Directory\Post_Type\taxonomy_slug_department());
 		$dept_exists = $dept_check !== 0 && $dept_check !== null ? true : false;
