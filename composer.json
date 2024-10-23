@@ -1,6 +1,7 @@
 {
   "name": "vcul/vcul-plugin-directory",
   "description": "WordPress plugin for managing VCUL internal and public staff directories.",
+  "license": "MIT",
   "authors": [
     {
       "name": "Virginia Commonwealth University Libraries"
