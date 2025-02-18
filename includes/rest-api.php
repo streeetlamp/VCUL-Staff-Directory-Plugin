@@ -67,6 +67,7 @@ class Rest_API
 					$headshot_privacy = get_post_meta(get_the_ID(), 'internal_pic_only', true);
 					$headshot = \VCUL\Directory\privacy_check($fetchSite, $headshot_privacy) ? wp_get_attachment_url(get_post_thumbnail_id()) : plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 					$legacy_url = reverseName(get_post_field('post_name', get_post()));
+					$libcal_link = get_post_meta(get_the_ID(), 'directory_libcal', true);
 
 					if ($headshot == false) {
 						$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
@@ -86,7 +87,8 @@ class Rest_API
 						'location' => $directory_address,
 						'protitle' => $protitle,
 						'expertise' => $expertise,
-						'flipped_slug' => $legacy_url
+						'flipped_slug' => $legacy_url,
+						'libcal_link' => $libcal_link
 					);
 					$expertise_list[] = $expert;
 			}
@@ -155,7 +157,8 @@ class Rest_API
 						'email' => $email,
 						'location' => $directory_address,
 						'protitle' => $protitle,
-						'flipped_slug' => $legacy_url
+						'flipped_slug' => $legacy_url,
+						'libcal_link' => $libcal_link
 					);
 
 					$expert_list[] = $expert;
