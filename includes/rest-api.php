@@ -337,7 +337,7 @@ class Rest_API
 		);
 
 
-		$directory = array();
+		$the_directory = array();
 
 		$directory_query = new \WP_Query($directory_query_args);
 
