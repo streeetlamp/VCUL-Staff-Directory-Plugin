@@ -38,7 +38,7 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	 * @return string
 	 */
 	function plugin_version() {
-		return '0.0.10';
+		return '1.0.13';
 	}
 
 	/* 
@@ -55,10 +55,11 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	*/
 	function privacy_check ($origin, $field = false) 
 	{
-		if ($origin == 'same-origin' || $field == false) {
+		if ( false === $field || '0' === $field || 0 === $field || '' === $field || null === $field ) {
 			return true;
 		}
-		return false;
+
+		return is_user_logged_in();
 	}
 
 	/**

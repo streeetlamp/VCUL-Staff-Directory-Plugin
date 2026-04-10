@@ -4,5 +4,8 @@
     "wordpress",
     "*"
   ],
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "chat.tools.terminal.autoApprove": {
+    "./vendor/bin/phpunit": true
+  }
 }

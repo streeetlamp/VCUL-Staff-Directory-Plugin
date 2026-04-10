@@ -140,7 +140,13 @@ function sanitize_checkbox($value)
 
 function sanitize_js($value)
 {
-	return base64_encode($value);
+	$value = esc_url_raw($value);
+
+	if ( empty($value) ) {
+		return '';
+	}
+
+	return wp_http_validate_url($value) ? $value : '';
 }
 
 add_action('init', 'VCUL\Directory\Post_Type\register_post_type', 12);
@@ -519,8 +525,22 @@ function save_post($post_id, $post)
 	$key = get_registered_meta_keys('post');
 	
 	foreach (post_meta_keys() as $key => $args) {
-		if (isset($_POST[$key]) && '' !== $_POST[$key] && isset($args['sanitize_callback'])) {
-			update_post_meta($post_id, $key, $_POST[$key]);
+		if (isset($_POST[$key]) && '' !== $_POST[$key]) {
+			$meta_value = wp_unslash($_POST[$key]);
+			$sanitize_callback = $args['sanitize_callback'] ?? null;
+
+			if (is_string($sanitize_callback) && !is_callable($sanitize_callback)) {
+				$namespaced_callback = __NAMESPACE__ . '\\' . $sanitize_callback;
+				if (is_callable($namespaced_callback)) {
+					$sanitize_callback = $namespaced_callback;
+				}
+			}
+
+			if (is_callable($sanitize_callback)) {
+				$meta_value = call_user_func($sanitize_callback, $meta_value);
+			}
+
+			update_post_meta($post_id, $key, $meta_value);
 		} else {
 			delete_post_meta($post_id, $key);
 		}

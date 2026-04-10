@@ -1,5 +1,4 @@
 <?php
-
 namespace VCUL\Plugin\Directory;
 
 function reverseName($name)
@@ -192,6 +191,8 @@ class Rest_API
 		$dept_exists = $dept_check !== 0 && $dept_check !== null ? true : false;
 
 		if (!$dept_exists) {
+			$department_list = array();
+
 			$departments = get_terms(
 				array(
 					'taxonomy' => \VCUL\Directory\Post_Type\taxonomy_slug_department(),
@@ -220,6 +221,7 @@ class Rest_API
 				return new \WP_Error('error', 'Sorry, something went wrong.', array('status' => 500));
 			}
 		} else {
+			$the_department = array();
 
 			$dept_query_args = array(
 				'posts_per_page' => -1,
@@ -289,13 +291,13 @@ class Rest_API
 	public static function get_settings(\WP_REST_Request $request)
 	{
 		$params = $request->get_query_params();
-		$org_chart = get_option('directory_settings');
+		$org_chart = get_option('directory_settings', array());
 
 		$settings_array = array();
 
 		try {
 			$settings_array = [
-				"org_chart" => $org_chart['org_chart'],
+				"org_chart" => isset( $org_chart['org_chart'] ) ? $org_chart['org_chart'] : '',
 			];
 
 			return new \WP_REST_Response(

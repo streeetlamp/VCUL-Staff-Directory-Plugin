@@ -63,13 +63,13 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 	 *
 	 * Fails because permission_callback is `__return_true`.
 	 */
-	public function test_get_directory_requires_authentication() {
+	public function test_get_directory_is_public() {
 		wp_set_current_user( 0 );
 
 		$request  = new WP_REST_Request( 'GET', $this->ns . '/get-directory' );
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 401, $response->get_status(), 'get-directory must reject unauthenticated requests' );
+		$this->assertEquals( 200, $response->get_status(), 'get-directory should remain publicly readable' );
 	}
 
 	/**
@@ -77,13 +77,13 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 	 *
 	 * Fails because permission_callback is `__return_true`.
 	 */
-	public function test_get_experts_requires_authentication() {
+	public function test_get_experts_is_public() {
 		wp_set_current_user( 0 );
 
 		$request  = new WP_REST_Request( 'GET', $this->ns . '/get-experts' );
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 401, $response->get_status(), 'get-experts must reject unauthenticated requests' );
+		$this->assertEquals( 200, $response->get_status(), 'get-experts should remain publicly readable' );
 	}
 
 	/**
@@ -91,13 +91,13 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 	 *
 	 * Fails because permission_callback is `__return_true`.
 	 */
-	public function test_get_department_requires_authentication() {
+	public function test_get_department_is_public() {
 		wp_set_current_user( 0 );
 
 		$request  = new WP_REST_Request( 'GET', $this->ns . '/get-department' );
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 401, $response->get_status(), 'get-department must reject unauthenticated requests' );
+		$this->assertEquals( 200, $response->get_status(), 'get-department should remain publicly readable' );
 	}
 
 	/**
@@ -105,13 +105,13 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 	 *
 	 * Fails because permission_callback is `__return_true`.
 	 */
-	public function test_get_settings_requires_authentication() {
+	public function test_get_settings_is_public() {
 		wp_set_current_user( 0 );
 
 		$request  = new WP_REST_Request( 'GET', $this->ns . '/get-settings' );
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 401, $response->get_status(), 'get-settings must reject unauthenticated requests' );
+		$this->assertEquals( 200, $response->get_status(), 'get-settings should remain publicly readable' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -177,6 +177,8 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 	 * statement, producing a PHP notice (promoted to an exception by phpunit.xml).
 	 */
 	public function test_get_department_list_with_no_terms_returns_empty_array() {
+		wp_set_current_user( 0 );
+
 		// The test database has no department terms by default.
 		$request  = new WP_REST_Request( 'GET', $this->ns . '/get-department' );
 		$response = $this->server->dispatch( $request );
