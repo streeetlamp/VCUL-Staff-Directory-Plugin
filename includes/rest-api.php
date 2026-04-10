@@ -12,6 +12,16 @@ function reverseName($name)
 class Rest_API
 {
 	// Debug ?_envelope&_wpnonce=5xti%20DfaS%20Y1hC%20GUmQ%20lKLZ%20Fe53
+	/**
+	 * Returns taxonomy terms for a post as [{name, slug}] objects.
+	 */
+	private static function get_post_terms_with_slugs($post_id, $taxonomy) {
+		$terms = wp_get_object_terms($post_id, $taxonomy);
+		return array_map(function($term) {
+			return array('name' => $term->name, 'slug' => $term->slug);
+		}, $terms);
+	}
+
 	public static function get_experts(\WP_REST_Request $request)
 	{
 
@@ -54,8 +64,8 @@ class Rest_API
 				while ($experts_query->have_posts()) {
 					$experts_query->the_post();
 					
-					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
-					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+					$expertise = self::get_post_terms_with_slugs(get_the_ID(), 'expertise');
+					$department = self::get_post_terms_with_slugs(get_the_ID(), 'department');
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
 					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
@@ -122,8 +132,8 @@ class Rest_API
 				while ($expert_query->have_posts()) {
 
 				$expert_query->the_post();
-				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
-				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+				$expertise = self::get_post_terms_with_slugs(get_the_ID(), 'expertise');
+				$department = self::get_post_terms_with_slugs(get_the_ID(), 'department');
 				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 				$directory_cv = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
 				$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
@@ -206,6 +216,7 @@ class Rest_API
 
 					$department = array(
 						'name' => $department->name,
+						'slug' => $department->slug,
 						'count' => $department->count,
 					);
 
@@ -240,8 +251,8 @@ class Rest_API
 				while ($department_query->have_posts()) {
 					$department_query->the_post();
 
-					$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
-					$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+					$expertise = self::get_post_terms_with_slugs(get_the_ID(), 'expertise');
+					$department = self::get_post_terms_with_slugs(get_the_ID(), 'department');
 					$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 					$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
 					$internal_phone = get_post_meta(get_the_ID(), 'internal_phone_only', true);
@@ -319,6 +330,7 @@ class Rest_API
 		$order = $params['order'] ?? 'ASC';
 		$page = $params['page'] ?? 1;
 		$staff = $params['staff'] ?? '';
+		$staff_id = $params['id'] ?? '';
 		add_filter('posts_orderby', 'VCUL\Directory\orderby_lastname');
 
 		$fetchSite = null;
@@ -335,8 +347,12 @@ class Rest_API
 			'posts_per_page' => $posts_per_page,
 			'paged' => intval($page),
 			'post_type' => \VCUL\Directory\Post_Type\post_type_slug(),
-			'name' => $staff,
 		);
+		if ($staff_id) {
+			$directory_query_args['p'] = intval($staff_id);
+		} elseif ($staff) {
+			$directory_query_args['name'] = $staff;
+		}
 
 
 		$the_directory = array();
@@ -349,8 +365,8 @@ class Rest_API
 
 				$directory_query->the_post();
 
-				$expertise = wp_get_object_terms(get_the_ID(), 'expertise', array('fields' => 'names'));
-				$department = wp_get_object_terms(get_the_ID(), 'department', array('fields' => 'names'));
+				$expertise = self::get_post_terms_with_slugs(get_the_ID(), 'expertise');
+				$department = self::get_post_terms_with_slugs(get_the_ID(), 'department');
 				$directory_title = get_post_meta(get_the_ID(), 'directory_title', true);
 				$directory_cv = get_post_meta(get_the_ID(), 'vcul-directory-cv', true);
 				$faculty_rank = get_post_meta(get_the_ID(), 'directory_rank', true);
@@ -370,7 +386,7 @@ class Rest_API
 					$headshot = plugins_url('img/anon_headshot.jpg', dirname(__FILE__));
 				}
 
-				if ($guides && $staff) {
+				if ($guides && ($staff || $staff_id)) {
 					try {
 						$response = wp_remote_get($guides, array(
 							'headers' => array(

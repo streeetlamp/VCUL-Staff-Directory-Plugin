@@ -44,6 +44,16 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 		update_post_meta( $this->staff_id, 'directory_email', 'jsmith@library.vcu.edu' );
 	}
 
+	private $dept_term_id;
+	private $expertise_term_id;
+
+	private function create_test_terms() {
+		$this->dept_term_id = wp_insert_term( 'Research & Education', 'department' );
+		$this->expertise_term_id = wp_insert_term( 'Data Science', 'expertise' );
+		wp_set_object_terms( $this->staff_id, array( $this->dept_term_id['term_id'] ), 'department' );
+		wp_set_object_terms( $this->staff_id, array( $this->expertise_term_id['term_id'] ), 'expertise' );
+	}
+
 	public function tearDown(): void {
 		global $wp_rest_server;
 		$wp_rest_server = null;
@@ -52,6 +62,96 @@ class VCUL_Directory_REST_API_Tests extends WP_UnitTestCase {
 		unset( $_SERVER['HTTP_SEC_FETCH_SITE'] );
 
 		parent::tearDown();
+	}
+
+	// -------------------------------------------------------------------------
+	// Response field contracts
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Department list response must include a slug field alongside name and count.
+	 */
+	public function test_department_list_includes_slug_field() {
+		$term = wp_insert_term( 'Systems & Discovery', 'department' );
+		wp_set_object_terms( $this->staff_id, array( $term['term_id'] ), 'department' );
+
+		$request  = new WP_REST_Request( 'GET', $this->ns . '/get-department' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertNotEmpty( $data );
+		$first = $data[0];
+		$this->assertArrayHasKey( 'name', $first, 'Department list entry must have name' );
+		$this->assertArrayHasKey( 'slug', $first, 'Department list entry must have slug' );
+		$this->assertArrayHasKey( 'count', $first, 'Department list entry must have count' );
+	}
+
+	/**
+	 * Staff expertise field must return objects with name and slug keys, not flat strings.
+	 */
+	public function test_expertise_field_returns_name_and_slug_objects() {
+		$this->create_test_terms();
+
+		$request = new WP_REST_Request( 'GET', $this->ns . '/get-directory' );
+		$request->set_param( 'staff', $this->staff_slug );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertNotEmpty( $data );
+		$expertise = $data[0]['expertise'];
+		$this->assertNotEmpty( $expertise, 'Expected expertise terms on staff entry' );
+		$this->assertArrayHasKey( 'name', $expertise[0], 'Expertise entry must have name key' );
+		$this->assertArrayHasKey( 'slug', $expertise[0], 'Expertise entry must have slug key' );
+		$this->assertEquals( 'Data Science', $expertise[0]['name'] );
+		$this->assertEquals( 'data-science', $expertise[0]['slug'] );
+	}
+
+	/**
+	 * Staff department field must return objects with name and slug keys, not flat strings.
+	 */
+	public function test_department_field_returns_name_and_slug_objects() {
+		$this->create_test_terms();
+
+		$request = new WP_REST_Request( 'GET', $this->ns . '/get-directory' );
+		$request->set_param( 'staff', $this->staff_slug );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertNotEmpty( $data );
+		$department = $data[0]['department'];
+		$this->assertNotEmpty( $department, 'Expected department terms on staff entry' );
+		$this->assertArrayHasKey( 'name', $department[0], 'Department entry must have name key' );
+		$this->assertArrayHasKey( 'slug', $department[0], 'Department entry must have slug key' );
+		$this->assertEquals( 'Research & Education', html_entity_decode( $department[0]['name'] ) );
+	}
+
+	/**
+	 * get-directory must return the correct staff member when queried by post ID.
+	 */
+	public function test_get_directory_by_id_returns_matching_staff() {
+		$request = new WP_REST_Request( 'GET', $this->ns . '/get-directory' );
+		$request->set_param( 'id', (string) $this->staff_id );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 1, $data, 'Expected exactly one result for a valid post ID' );
+		$this->assertEquals( $this->staff_id, $data[0]['id'] );
+		$this->assertEquals( 'Jane Smith', $data[0]['name'] );
+	}
+
+	/**
+	 * get-directory with an unknown ID must return an empty array, not an error.
+	 */
+	public function test_get_directory_by_nonexistent_id_returns_empty() {
+		$request = new WP_REST_Request( 'GET', $this->ns . '/get-directory' );
+		$request->set_param( 'id', '999999' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertIsArray( $data );
+		$this->assertEmpty( $data );
 	}
 
 	// -------------------------------------------------------------------------
